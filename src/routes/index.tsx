@@ -1,29 +1,32 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "FamilIA — Protección y tranquilidad para tu familia" },
+      { name: "description", content: "Inclusión financiera y protección contra fraudes para personas mayores." },
     ],
   }),
-  component: Index,
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Landing() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen flex items-center justify-center bg-background p-8">
+      <div className="max-w-xl text-center space-y-6">
+        <h1 className="text-5xl font-bold tracking-tight">FamilIA</h1>
+        <p className="text-lg text-muted-foreground">
+          Protección y tranquilidad para tu familia. Detecta estafas y cuida a quien más quieres.
+        </p>
+        <div className="flex gap-3 justify-center flex-wrap">
+          <a href="#" className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-base font-medium text-primary-foreground hover:bg-primary/90">
+            Proteger ahora — Prueba gratuita
+          </a>
+          <Link to="/elder" className="inline-flex items-center justify-center rounded-md border border-input px-6 py-3 text-base font-medium hover:bg-accent">
+            Vista Mayor (demo)
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

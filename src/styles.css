@@ -142,3 +142,68 @@
     color: var(--color-foreground);
   }
 }
+
+/* Elder Persona — high-contrast, locked 100vh */
+:root {
+  --elder-green: oklch(0.58 0.19 145);
+  --elder-yellow: oklch(0.86 0.18 95);
+  --elder-red: oklch(0.55 0.24 27);
+  --elder-bg: oklch(0.12 0 0);
+}
+
+html, body, #root { height: 100%; }
+
+.elder-root {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh; height: 100dvh;
+  overflow: hidden;
+  background: var(--elder-bg);
+  display: flex; flex-direction: column;
+  gap: 1.25vh; padding: 1.25vh;
+  touch-action: manipulation; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.elder-btn {
+  border: 4px solid #000; cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 1.5vh; padding: 2vh;
+  transition: transform 120ms ease, filter 120ms ease;
+}
+.elder-btn:focus-visible { outline: 6px solid #fff; outline-offset: -10px; }
+.elder-btn:active { transform: scale(0.98); filter: brightness(0.92); }
+
+.elder-btn--talk {
+  height: 45vh; border-radius: 9999px;
+  background: var(--elder-green);
+  align-self: center; aspect-ratio: 1 / 1;
+  max-width: 45vh;
+}
+
+.elder-bottom-row {
+  flex: 1; display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25vh; min-height: 0;
+}
+
+.elder-btn--read {
+  background: var(--elder-yellow);
+  border-radius: 24px; width: 100%; height: 100%;
+}
+.elder-btn--help {
+  background: var(--elder-red);
+  border-radius: 24px; width: 100%; height: 100%;
+}
+
+.elder-icon { width: 40%; height: auto; max-height: 22vh; color: #fff; }
+.elder-btn--read .elder-icon { color: #000; }
+
+.elder-label {
+  font-size: clamp(1.5rem, 4.2vh, 3rem);
+  font-weight: 800; letter-spacing: -0.01em;
+  text-align: center; line-height: 1;
+}
+.elder-label--light { color: #fff; }
+.elder-label--dark { color: #000; }
+.elder-btn--talk .elder-label { font-size: clamp(2rem, 6vh, 4rem); }
