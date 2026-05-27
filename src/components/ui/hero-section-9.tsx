@@ -80,13 +80,6 @@ const HeroSection = ({ title, subtitle, actions, stats, images, className }: Her
       >
         {/* Left: Text */}
         <div className="flex flex-col gap-8">
-          <motion.div variants={itemVariants}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-1.5 text-sm font-medium text-muted-foreground backdrop-blur">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              Tranquilidad para ti
-            </span>
-          </motion.div>
-
           <motion.h1
             variants={titleContainerVariants}
             className="text-3xl font-bold leading-[1.05] tracking-tight text-foreground md:text-4xl lg:text-5xl"
