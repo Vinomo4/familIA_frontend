@@ -36,6 +36,16 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+const titleContainerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.06 } },
+};
+
+const wordVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" as const } },
+};
+
 const imageVariants = {
   hidden: { opacity: 0, scale: 0.85 },
   visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" as const } },
@@ -73,15 +83,38 @@ const HeroSection = ({ title, subtitle, actions, stats, images, className }: Her
           <motion.div variants={itemVariants}>
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-1.5 text-sm font-medium text-muted-foreground backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              Protección activa 24/7
+              Tranquilidad para ti
             </span>
           </motion.div>
 
           <motion.h1
-            variants={itemVariants}
-            className="text-4xl font-bold leading-[1.1] tracking-tight text-foreground md:text-5xl lg:text-6xl"
+            variants={titleContainerVariants}
+            className="text-3xl font-bold leading-[1.05] tracking-tight text-foreground md:text-4xl lg:text-5xl"
           >
-            {title}
+            {(() => {
+              const text = typeof title === "string"
+                ? title
+                : React.Children.toArray(title)
+                    .map((c) => (typeof c === "string" ? c : React.isValidElement(c) && typeof c.props.children === "string" ? c.props.children : ""))
+                    .join(" ");
+
+              const words = text.split(" ");
+
+              return words.map((word, i) => {
+                const plain = word.replace(/\s+/g, "");
+                const needsGradient = /Independencia|Tranquilidad|Patrimonio/i.test(plain);
+                return (
+                  <motion.span key={i} variants={wordVariants} className="inline-block mr-2">
+                    {needsGradient ? (
+                      <span className="bg-gradient-to-r from-emerald-600 to-primary bg-clip-text text-transparent">{word}</span>
+                    ) : (
+                      word
+                    )}
+                    {i !== words.length - 1 ? " " : ""}
+                  </motion.span>
+                );
+              });
+            })()}
           </motion.h1>
 
           <motion.p

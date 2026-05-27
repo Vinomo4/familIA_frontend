@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ShieldCheck, Users, Heart } from "lucide-react";
+import { ShieldCheck, MessageCircle, Heart } from "lucide-react";
 import HeroSection from "@/components/ui/hero-section-9";
 
 export const Route = createFileRoute("/")({
@@ -50,9 +50,9 @@ function Landing() {
           },
         ]}
         stats={[
-          { value: "Bloqueo Anti-Fraude", label: "Interceptamos engaños telefónicos, links maliciosos e ingeniería social antes de que el dinero desaparezca.", icon: <ShieldCheck className="h-5 w-5" /> },
-          { value: "Traductor Bancario", label: "Convertimos la jerga legal de las cartas del banco y los recibos en mensajes de voz claros y comprensibles.", icon: <ShieldCheck className="h-5 w-5" /> },
-          { value: "Cero Barreras Digitales", label: "Una interfaz diseñada para la tercera edad. Sin teclados, sin correos electrónicos y sin contraseñas que recordar.", icon: <Heart className="h-5 w-5" /> },
+          { value: "Bloqueo Anti-Fraude", label: "Detectamos y bloqueamos fraudes y enlaces maliciosos.", icon: <ShieldCheck className="h-5 w-5" /> },
+          { value: "Traductor Bancario", label: "Convertimos cartas y recibos en mensajes de voz claros.", icon: <MessageCircle className="h-5 w-5" /> },
+          { value: "Cero Barreras Digitales", label: "Interfaz para la tercera edad: sin teclados ni contraseñas.", icon: <Heart className="h-5 w-5" /> },
         ]}
         images={[ 
           "https://images.unsplash.com/photo-1556889882-73ea40694a86?q=80&w=1200&auto=format&fit=crop",
