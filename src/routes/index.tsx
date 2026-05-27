@@ -22,33 +22,39 @@ function Landing() {
   return (
     <main className="min-h-screen bg-background">
       <HeroSection
-        title={
-          <>
-            Protege a quien más quieres{" "}
-            <span className="bg-gradient-to-r from-emerald-600 to-primary bg-clip-text text-transparent">
-              de las estafas
-            </span>
-          </>
-        }
-        subtitle="FamilIA acompaña a las personas mayores con una asistente de voz sencilla y avisa a la familia ante cualquier intento de fraude. Tranquilidad para todos, todos los días."
+        title="Protege el dinero de tus padres sin quitarles su independencia."
+        subtitle="Ellos usan una herramienta de voz muy sencilla para entender el banco. Tú recibes alertas en tiempo real ante comisiones abusivas o fraudes."
         actions={[
+          // Primary CTA: familiar -> payment/register flow
+          // Secondary CTA: elder -> share with family via WhatsApp or Web Share API
           {
-            text: "Proteger ahora — Prueba gratuita",
-            onClick: () => alert("Próximamente"),
+            text: "Proteger a mis padres ahora - Prueba gratuita",
+            onClick: () => navigate({ to: "/auth/register" }),
             variant: "default",
           },
           {
-            text: "Vista Mayor (demo)",
-            onClick: () => navigate({ to: "/elder" }),
+            text: "Quiero que mi familia me lo instale",
+            onClick: () => {
+              const message = `Hola, me gustaría que me instales FamilIA, un asistente de voz que me ayuda con mis gestiones bancarias y me protege de fraudes. ¿Podrías ayudarme? ${window.location.origin}/auth/register`;
+              if (navigator.share) {
+                navigator
+                  .share({ title: 'FamilIA — Ayúdame a instalarlo', text: message })
+                  .catch(() => {
+                    window.location.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                  });
+              } else {
+                window.location.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
+              }
+            },
             variant: "outline",
           },
         ]}
         stats={[
-          { value: "+12K", label: "Familias protegidas", icon: <Users className="h-5 w-5" /> },
-          { value: "98%", label: "Estafas detectadas", icon: <ShieldCheck className="h-5 w-5" /> },
-          { value: "24/7", label: "Acompañamiento", icon: <Heart className="h-5 w-5" /> },
+          { value: "Bloqueo Anti-Fraude", label: "Interceptamos engaños telefónicos, links maliciosos e ingeniería social antes de que el dinero desaparezca.", icon: <ShieldCheck className="h-5 w-5" /> },
+          { value: "Traductor Bancario", label: "Convertimos la jerga legal de las cartas del banco y los recibos en mensajes de voz claros y comprensibles.", icon: <ShieldCheck className="h-5 w-5" /> },
+          { value: "Cero Barreras Digitales", label: "Una interfaz diseñada para la tercera edad. Sin teclados, sin correos electrónicos y sin contraseñas que recordar.", icon: <Heart className="h-5 w-5" /> },
         ]}
-        images={[
+        images={[ 
           "https://images.unsplash.com/photo-1556889882-73ea40694a86?q=80&w=1200&auto=format&fit=crop",
           "https://images.unsplash.com/photo-1581579186913-45ac3e6efe93?q=80&w=1200&auto=format&fit=crop",
           "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=1200&auto=format&fit=crop",
