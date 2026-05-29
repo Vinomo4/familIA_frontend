@@ -27,7 +27,7 @@ function Landing() {
         title="Protege el dinero de tus padres sin quitarles su independencia."
         subtitle="Ellos usan una herramienta de voz muy sencilla para entender el banco. Tú recibes alertas en tiempo real ante comisiones abusivas o fraudes."
         actions={[
-          // Primary CTA: familiar -> payment/register flow
+          // Primary CTA: familiar -> pricing/register flow
           // Secondary CTA: elder -> share with family via WhatsApp or Web Share API
           {
             text: "Proteger a mis padres ahora - Prueba gratuita",

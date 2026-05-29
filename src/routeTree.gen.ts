@@ -9,11 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ElderSetupRouteImport } from './routes/elder-setup'
 import { Route as ElderRouteImport } from './routes/elder'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthTutorRouteImport } from './routes/auth/tutor'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ElderSetupRoute = ElderSetupRouteImport.update({
+  id: '/elder-setup',
+  path: '/elder-setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ElderRoute = ElderRouteImport.update({
   id: '/elder',
   path: '/elder',
@@ -38,12 +50,16 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/elder': typeof ElderRoute
+  '/elder-setup': typeof ElderSetupRoute
+  '/pricing': typeof PricingRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/tutor': typeof AuthTutorRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/elder': typeof ElderRoute
+  '/elder-setup': typeof ElderSetupRoute
+  '/pricing': typeof PricingRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/tutor': typeof AuthTutorRoute
 }
@@ -51,26 +67,63 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/elder': typeof ElderRoute
+  '/elder-setup': typeof ElderSetupRoute
+  '/pricing': typeof PricingRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/tutor': typeof AuthTutorRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/elder' | '/auth/login' | '/auth/tutor'
+  fullPaths:
+    | '/'
+    | '/elder'
+    | '/elder-setup'
+    | '/pricing'
+    | '/auth/login'
+    | '/auth/tutor'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/elder' | '/auth/login' | '/auth/tutor'
-  id: '__root__' | '/' | '/elder' | '/auth/login' | '/auth/tutor'
+  to:
+    | '/'
+    | '/elder'
+    | '/elder-setup'
+    | '/pricing'
+    | '/auth/login'
+    | '/auth/tutor'
+  id:
+    | '__root__'
+    | '/'
+    | '/elder'
+    | '/elder-setup'
+    | '/pricing'
+    | '/auth/login'
+    | '/auth/tutor'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ElderRoute: typeof ElderRoute
+  ElderSetupRoute: typeof ElderSetupRoute
+  PricingRoute: typeof PricingRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthTutorRoute: typeof AuthTutorRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/elder-setup': {
+      id: '/elder-setup'
+      path: '/elder-setup'
+      fullPath: '/elder-setup'
+      preLoaderRoute: typeof ElderSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/elder': {
       id: '/elder'
       path: '/elder'
@@ -105,6 +158,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ElderRoute: ElderRoute,
+  ElderSetupRoute: ElderSetupRoute,
+  PricingRoute: PricingRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthTutorRoute: AuthTutorRoute,
 }

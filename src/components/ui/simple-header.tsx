@@ -15,7 +15,7 @@ export function SimpleHeader() {
     },
     {
       label: "Precios",
-      href: "#",
+      href: "/pricing",
     },
     {
       label: "Acerca de",
