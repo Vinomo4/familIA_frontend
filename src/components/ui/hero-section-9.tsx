@@ -76,7 +76,7 @@ const HeroSection = ({ title, subtitle, actions, stats, images, className }: Her
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="container mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 py-20 md:py-28 lg:grid-cols-2 lg:gap-16"
+        className="container mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-6 pt-8 pb-14 md:pt-12 md:pb-16 lg:grid-cols-2 lg:gap-14"
       >
         {/* Left: Text */}
         <div className="flex flex-col gap-8">
@@ -85,11 +85,18 @@ const HeroSection = ({ title, subtitle, actions, stats, images, className }: Her
             className="text-3xl font-bold leading-[1.05] tracking-tight text-foreground md:text-4xl lg:text-5xl"
           >
             {(() => {
-              const text = typeof title === "string"
-                ? title
-                : React.Children.toArray(title)
-                    .map((c) => (typeof c === "string" ? c : React.isValidElement(c) && typeof c.props.children === "string" ? c.props.children : ""))
-                    .join(" ");
+              const text =
+                typeof title === "string"
+                  ? title
+                  : React.Children.toArray(title)
+                      .map((c) =>
+                        typeof c === "string"
+                          ? c
+                          : React.isValidElement(c) && typeof c.props.children === "string"
+                            ? c.props.children
+                            : "",
+                      )
+                      .join(" ");
 
               const words = text.split(" ");
 
@@ -99,7 +106,9 @@ const HeroSection = ({ title, subtitle, actions, stats, images, className }: Her
                 return (
                   <motion.span key={i} variants={wordVariants} className="inline-block mr-2">
                     {needsGradient ? (
-                      <span className="bg-gradient-to-r from-emerald-600 to-primary bg-clip-text text-transparent">{word}</span>
+                      <span className="bg-gradient-to-r from-emerald-600 to-primary bg-clip-text text-transparent">
+                        {word}
+                      </span>
                     ) : (
                       word
                     )}

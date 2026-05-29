@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ElderRouteImport } from './routes/elder'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthTutorRouteImport } from './routes/auth/tutor'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
 
 const ElderRoute = ElderRouteImport.update({
   id: '/elder',
@@ -22,31 +24,49 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthTutorRoute = AuthTutorRouteImport.update({
+  id: '/auth/tutor',
+  path: '/auth/tutor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/elder': typeof ElderRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/tutor': typeof AuthTutorRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/elder': typeof ElderRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/tutor': typeof AuthTutorRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/elder': typeof ElderRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/tutor': typeof AuthTutorRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/elder'
+  fullPaths: '/' | '/elder' | '/auth/login' | '/auth/tutor'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/elder'
-  id: '__root__' | '/' | '/elder'
+  to: '/' | '/elder' | '/auth/login' | '/auth/tutor'
+  id: '__root__' | '/' | '/elder' | '/auth/login' | '/auth/tutor'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ElderRoute: typeof ElderRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthTutorRoute: typeof AuthTutorRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,13 +85,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/tutor': {
+      id: '/auth/tutor'
+      path: '/auth/tutor'
+      fullPath: '/auth/tutor'
+      preLoaderRoute: typeof AuthTutorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ElderRoute: ElderRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthTutorRoute: AuthTutorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
