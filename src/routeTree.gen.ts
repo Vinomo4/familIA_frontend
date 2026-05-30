@@ -10,20 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as ElderSetupRouteImport } from './routes/elder-setup'
 import { Route as ElderRouteImport } from './routes/elder'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthTutorRouteImport } from './routes/auth/tutor'
-import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthSignupIndexRouteImport } from './routes/auth/signup/index'
+import { Route as AuthSigninIndexRouteImport } from './routes/auth/signin/index'
+import { Route as AuthSigninTutorRouteImport } from './routes/auth/signin/tutor'
+import { Route as AuthSignupTutorIndexRouteImport } from './routes/auth/signup/tutor/index'
+import { Route as AuthSignupTutorElderSetupRouteImport } from './routes/auth/signup/tutor/elder-setup'
 
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ElderSetupRoute = ElderSetupRouteImport.update({
-  id: '/elder-setup',
-  path: '/elder-setup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ElderRoute = ElderRouteImport.update({
@@ -36,76 +33,106 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthTutorRoute = AuthTutorRouteImport.update({
-  id: '/auth/tutor',
-  path: '/auth/tutor',
+const AuthSignupIndexRoute = AuthSignupIndexRouteImport.update({
+  id: '/auth/signup/',
+  path: '/auth/signup/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/auth/login',
-  path: '/auth/login',
+const AuthSigninIndexRoute = AuthSigninIndexRouteImport.update({
+  id: '/auth/signin/',
+  path: '/auth/signin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthSigninTutorRoute = AuthSigninTutorRouteImport.update({
+  id: '/auth/signin/tutor',
+  path: '/auth/signin/tutor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignupTutorIndexRoute = AuthSignupTutorIndexRouteImport.update({
+  id: '/auth/signup/tutor/',
+  path: '/auth/signup/tutor/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignupTutorElderSetupRoute =
+  AuthSignupTutorElderSetupRouteImport.update({
+    id: '/auth/signup/tutor/elder-setup',
+    path: '/auth/signup/tutor/elder-setup',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/elder': typeof ElderRoute
-  '/elder-setup': typeof ElderSetupRoute
   '/pricing': typeof PricingRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/tutor': typeof AuthTutorRoute
+  '/auth/signin/tutor': typeof AuthSigninTutorRoute
+  '/auth/signin/': typeof AuthSigninIndexRoute
+  '/auth/signup/': typeof AuthSignupIndexRoute
+  '/auth/signup/tutor/elder-setup': typeof AuthSignupTutorElderSetupRoute
+  '/auth/signup/tutor/': typeof AuthSignupTutorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/elder': typeof ElderRoute
-  '/elder-setup': typeof ElderSetupRoute
   '/pricing': typeof PricingRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/tutor': typeof AuthTutorRoute
+  '/auth/signin/tutor': typeof AuthSigninTutorRoute
+  '/auth/signin': typeof AuthSigninIndexRoute
+  '/auth/signup': typeof AuthSignupIndexRoute
+  '/auth/signup/tutor/elder-setup': typeof AuthSignupTutorElderSetupRoute
+  '/auth/signup/tutor': typeof AuthSignupTutorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/elder': typeof ElderRoute
-  '/elder-setup': typeof ElderSetupRoute
   '/pricing': typeof PricingRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/tutor': typeof AuthTutorRoute
+  '/auth/signin/tutor': typeof AuthSigninTutorRoute
+  '/auth/signin/': typeof AuthSigninIndexRoute
+  '/auth/signup/': typeof AuthSignupIndexRoute
+  '/auth/signup/tutor/elder-setup': typeof AuthSignupTutorElderSetupRoute
+  '/auth/signup/tutor/': typeof AuthSignupTutorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/elder'
-    | '/elder-setup'
     | '/pricing'
-    | '/auth/login'
-    | '/auth/tutor'
+    | '/auth/signin/tutor'
+    | '/auth/signin/'
+    | '/auth/signup/'
+    | '/auth/signup/tutor/elder-setup'
+    | '/auth/signup/tutor/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/elder'
-    | '/elder-setup'
     | '/pricing'
-    | '/auth/login'
-    | '/auth/tutor'
+    | '/auth/signin/tutor'
+    | '/auth/signin'
+    | '/auth/signup'
+    | '/auth/signup/tutor/elder-setup'
+    | '/auth/signup/tutor'
   id:
     | '__root__'
     | '/'
     | '/elder'
-    | '/elder-setup'
     | '/pricing'
-    | '/auth/login'
-    | '/auth/tutor'
+    | '/auth/signin/tutor'
+    | '/auth/signin/'
+    | '/auth/signup/'
+    | '/auth/signup/tutor/elder-setup'
+    | '/auth/signup/tutor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ElderRoute: typeof ElderRoute
-  ElderSetupRoute: typeof ElderSetupRoute
   PricingRoute: typeof PricingRoute
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthTutorRoute: typeof AuthTutorRoute
+  AuthSigninTutorRoute: typeof AuthSigninTutorRoute
+  AuthSigninIndexRoute: typeof AuthSigninIndexRoute
+  AuthSignupIndexRoute: typeof AuthSignupIndexRoute
+  AuthSignupTutorElderSetupRoute: typeof AuthSignupTutorElderSetupRoute
+  AuthSignupTutorIndexRoute: typeof AuthSignupTutorIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -115,13 +142,6 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/elder-setup': {
-      id: '/elder-setup'
-      path: '/elder-setup'
-      fullPath: '/elder-setup'
-      preLoaderRoute: typeof ElderSetupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/elder': {
@@ -138,18 +158,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/tutor': {
-      id: '/auth/tutor'
-      path: '/auth/tutor'
-      fullPath: '/auth/tutor'
-      preLoaderRoute: typeof AuthTutorRouteImport
+    '/auth/signup/': {
+      id: '/auth/signup/'
+      path: '/auth/signup'
+      fullPath: '/auth/signup/'
+      preLoaderRoute: typeof AuthSignupIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/login': {
-      id: '/auth/login'
-      path: '/auth/login'
-      fullPath: '/auth/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
+    '/auth/signin/': {
+      id: '/auth/signin/'
+      path: '/auth/signin'
+      fullPath: '/auth/signin/'
+      preLoaderRoute: typeof AuthSigninIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/signin/tutor': {
+      id: '/auth/signin/tutor'
+      path: '/auth/signin/tutor'
+      fullPath: '/auth/signin/tutor'
+      preLoaderRoute: typeof AuthSigninTutorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/signup/tutor/': {
+      id: '/auth/signup/tutor/'
+      path: '/auth/signup/tutor'
+      fullPath: '/auth/signup/tutor/'
+      preLoaderRoute: typeof AuthSignupTutorIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/signup/tutor/elder-setup': {
+      id: '/auth/signup/tutor/elder-setup'
+      path: '/auth/signup/tutor/elder-setup'
+      fullPath: '/auth/signup/tutor/elder-setup'
+      preLoaderRoute: typeof AuthSignupTutorElderSetupRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -158,10 +199,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ElderRoute: ElderRoute,
-  ElderSetupRoute: ElderSetupRoute,
   PricingRoute: PricingRoute,
-  AuthLoginRoute: AuthLoginRoute,
-  AuthTutorRoute: AuthTutorRoute,
+  AuthSigninTutorRoute: AuthSigninTutorRoute,
+  AuthSigninIndexRoute: AuthSigninIndexRoute,
+  AuthSignupIndexRoute: AuthSignupIndexRoute,
+  AuthSignupTutorElderSetupRoute: AuthSignupTutorElderSetupRoute,
+  AuthSignupTutorIndexRoute: AuthSignupTutorIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -82,7 +82,7 @@ export function Pricing() {
 
 	const handleProceedToSetup = () => {
 		setIsSuccess(false);
-		navigate({ to: "/elder-setup" });
+		navigate({ to: "/auth/signup/tutor/elder-setup" });
 	};
 
 	const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {

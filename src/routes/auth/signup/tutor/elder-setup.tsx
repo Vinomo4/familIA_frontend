@@ -37,16 +37,16 @@ const elderSetupSearchSchema = z.object({
   step: z.coerce.number().min(1).max(5).catch(1),
 });
 
-export const Route = createFileRoute("/elder-setup")({
+export const Route = createFileRoute("/auth/signup/tutor/elder-setup")({
   validateSearch: (search) => elderSetupSearchSchema.parse(search),
   component: ElderSetupRoute,
 });
 
-const routeApi = getRouteApi("/elder-setup");
+const routeApi = getRouteApi("/auth/signup/tutor/elder-setup");
 
 function ElderSetupRoute() {
   const id = useId();
-  const navigate = useNavigate({ from: "/elder-setup" });
+  const navigate = useNavigate({ from: "/auth/signup/tutor/elder-setup" });
   const { step: currentStep } = routeApi.useSearch();
 
   const [isLoading, setIsLoading] = useState(false);

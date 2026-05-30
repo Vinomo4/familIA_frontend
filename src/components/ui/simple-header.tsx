@@ -37,9 +37,11 @@ export function SimpleHeader() {
             </a>
           ))}
           <Button variant="outline" asChild>
-            <Link to="/auth/login">Iniciar sesión</Link>
+            <Link to="/auth/signin">Iniciar sesión</Link>
           </Button>
-          <Button>Comenzar</Button>
+          <Button asChild>
+            <Link to="/auth/signup">Comenzar</Link>
+          </Button>
         </div>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
@@ -68,9 +70,11 @@ export function SimpleHeader() {
             </div>
             <SheetFooter>
               <Button variant="outline" asChild>
-                <Link to="/auth/login">Iniciar sesión</Link>
+                <Link to="/auth/signin">Iniciar sesión</Link>
               </Button>
-              <Button>Comenzar</Button>
+              <Button asChild>
+                <Link to="/auth/signup">Comenzar</Link>
+              </Button>
             </SheetFooter>
           </SheetContent>
         </Sheet>

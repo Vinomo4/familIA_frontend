@@ -1,24 +1,25 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+// src/routes/auth/signin/tutor.tsx
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GooeySpinner } from "@/components/ui/gooey-spinner";
-import { AestheticLayout } from "@/components/ui/aesthetic-layout"; // <-- Import your new shared layout
+import { AestheticLayout } from "@/components/ui/aesthetic-layout";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/auth/tutor")({
+export const Route = createFileRoute("/auth/signin/tutor")({
   head: () => ({
     meta: [
-      { title: "Acceso Familiar / Tutor" },
+      { title: "Iniciar Sesión — Familiar / Tutor" },
       {
         name: "description",
-        content: "Crea tu cuenta familiar para gestionar y proteger a quienes más quieres.",
+        content: "Accede a tu cuenta de tutor para supervisar y proteger a tus familiares.",
       },
     ],
   }),
-  component: TutorSignup,
+  component: TutorSignin,
 });
 
 interface SocialLoginsProps {
@@ -34,21 +35,21 @@ export function SocialLogins({ className, isLoading, onAction }: SocialLoginsPro
         type="button"
         disabled={isLoading}
         onClick={onAction}
-        aria-label="Continuar con Apple"
-        className="w-full bg-black hover:bg-stone-900 disabled:opacity-50 disabled:pointer-events-none text-white flex items-center justify-center gap-3 h-12 rounded-full font-medium text-sm transition-colors"
+        aria-label="Iniciar sesión con Apple"
+        className="w-full bg-black hover:bg-stone-900 disabled:opacity-50 disabled:pointer-events-none text-white flex items-center justify-center gap-3 h-12 rounded-full font-medium text-sm transition-colors cursor-pointer"
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current shrink-0" xmlns="http://www.w3.org/2000/svg">
           <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.12.09 2.27-.58 2.95-1.39z"/>
         </svg>
-        <span className="whitespace-nowrap leading-none">Continuar con Apple</span>
+        <span className="whitespace-nowrap leading-none">Iniciar sesión con Apple</span>
       </button>
 
       <button
         type="button"
         disabled={isLoading}
         onClick={onAction}
-        aria-label="Continuar con Google"
-        className="w-full bg-white hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none text-gray-700 border border-gray-300/70 flex items-center justify-center gap-3 h-12 rounded-full font-medium text-sm transition-colors shadow-sm"
+        aria-label="Iniciar sesión con Google"
+        className="w-full bg-white hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none text-gray-700 border border-gray-300/70 flex items-center justify-center gap-3 h-12 rounded-full font-medium text-sm transition-colors shadow-sm cursor-pointer"
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0" xmlns="http://www.w3.org/2000/svg">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -56,13 +57,13 @@ export function SocialLogins({ className, isLoading, onAction }: SocialLoginsPro
           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
           <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
         </svg>
-        <span className="whitespace-nowrap leading-none">Continuar con Google</span>
+        <span className="whitespace-nowrap leading-none">Iniciar sesión con Google</span>
       </button>
     </div>
   );
 }
 
-function TutorSignup() {
+function TutorSignin() {
   const id = useId();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -72,26 +73,24 @@ function TutorSignup() {
     setIsLoading(true);
 
     setTimeout(() => {
-      navigate({ to: "/pricing" }); 
-    }, 2500);
+      // Modificado para redirigir al área privada/dashboard tras autenticarse
+      navigate({ to: "/dashboard" }); 
+    }, 2000);
   };
 
   return (
     <AestheticLayout maxWidthClassName="max-w-md">
-      {/* Because this route needs a card layout container, we build the card shell 
-        explicitly inside the borderless master layout setup.
-      */}
       <div className="relative overflow-hidden rounded-2xl border border-border/40 bg-white p-8 shadow-md">
         
-        {/* Loading overlay remains mapped strictly inside the card dimensions */}
+        {/* Loading overlay adaptado para la verificación de acceso */}
         {isLoading && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/95 p-6 text-center animate-in fade-in zoom-in-95 duration-200">
             <div className="flex flex-col items-center gap-6">
               <GooeySpinner />
               <div className="space-y-2">
-                <h2 className="text-xl font-semibold text-gray-900">Estamos configurando todo</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Verificando tus credenciales</h2>
                 <p className="text-sm text-gray-500 max-w-[280px] mx-auto">
-                  Por favor, espera un momento mientras preparamos tu cuenta.
+                  Por favor, espera un momento mientras accedemos a tu cuenta.
                 </p>
               </div>
             </div>
@@ -107,41 +106,44 @@ function TutorSignup() {
               <circle cx="16" cy="16" r="12" fill="none" strokeWidth="8" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight">Crea tu cuenta</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Bienvenido de nuevo</h1>
           <p className="text-sm text-muted-foreground">
-            Solo necesitamos algunos datos para empezar a proteger a tu familia.
+            Introduce tus datos de acceso para entrar a tu panel de gestión.
           </p>
         </div>
 
         <form onSubmit={handleAuthTrigger} className="mt-6 space-y-5">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor={`${id}-name`}>Nombre completo</Label>
-              <Input id={`${id}-name`} placeholder="María López" type="text" required disabled={isLoading} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`${id}-email`}>Correo</Label>
+              <Label htmlFor={`${id}-email`}>Correo electrónico</Label>
               <Input id={`${id}-email`} placeholder="hola@familia.com" type="email" required disabled={isLoading} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor={`${id}-password`}>Contraseña</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor={`${id}-password`}>Contraseña</Label>
+                <a href="#" className="text-xs text-primary underline hover:no-underline">
+                  ¿Olvidaste tu contraseña?
+                </a>
+              </div>
               <Input id={`${id}-password`} placeholder="Introduce tu contraseña" type="password" required disabled={isLoading} />
             </div>
           </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            Crear cuenta
+          <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
+            Iniciar sesión
           </Button>
         </form>
 
         <div className="mt-6 flex items-center gap-3 before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
-          <span className="text-xs text-muted-foreground">O</span>
+          <span className="text-xs text-muted-foreground">O continuar con</span>
         </div>
         
         <SocialLogins className="mt-5" isLoading={isLoading} onAction={() => handleAuthTrigger()} />
         
-        <p className="mt-4 text-center text-xs text-muted-foreground">
-          Al registrarte aceptas nuestros{" "}
-          <a className="underline hover:no-underline" href="#">Términos</a>.
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          ¿Aún no tienes una cuenta?{" "}
+          <Link to="/auth/signup/tutor" className="underline font-medium text-primary hover:no-underline">
+            Regístrate aquí
+          </Link>
         </p>
       </div>
     </AestheticLayout>

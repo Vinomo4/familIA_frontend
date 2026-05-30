@@ -27,17 +27,17 @@ function Landing() {
         title="Protege el dinero de tus padres sin quitarles su independencia."
         subtitle="Ellos usan una herramienta de voz muy sencilla para entender el banco. Tú recibes alertas en tiempo real ante comisiones abusivas o fraudes."
         actions={[
-          // Primary CTA: familiar -> pricing/register flow
+          // Primary CTA: start signup flow
           // Secondary CTA: elder -> share with family via WhatsApp or Web Share API
           {
-            text: "Proteger a mis padres ahora - Prueba gratuita",
-            onClick: () => navigate({ to: "/auth/register" }),
+            text: "Comenzar",
+            onClick: () => navigate({ to: "/auth/signup" }),
             variant: "default",
           },
           {
             text: "Quiero que mi familia me lo instale",
             onClick: () => {
-              const message = `Hola, me gustaría que me instales FamilIA, un asistente de voz que me ayuda con mis gestiones bancarias y me protege de fraudes. ¿Podrías ayudarme? ${window.location.origin}/auth/register`;
+              const message = `Hola, me gustaría que me instales FamilIA, un asistente de voz que me ayuda con mis gestiones bancarias y me protege de fraudes. ¿Podrías ayudarme? ${window.location.origin}/`;
               if (navigator.share) {
                 navigator
                   .share({ title: "FamilIA — Ayúdame a instalarlo", text: message })
