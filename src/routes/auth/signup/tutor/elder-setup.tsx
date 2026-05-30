@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { GooeySpinner } from "@/components/ui/gooey-spinner";
 import { cn } from "@/lib/utils";
+import { storeElderProfile } from "@/lib/elder-profile";
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList, CommandItem } from '@/components/ui/command';
@@ -143,6 +144,13 @@ function ElderSetupRoute() {
   };
 
   const triggerSubmit = () => {
+    storeElderProfile({
+      name: firstName,
+      countryPrefix: selectedCountry.prefix,
+      phone,
+      pin: otp.join(""),
+    });
+
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);

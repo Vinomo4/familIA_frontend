@@ -2,7 +2,7 @@
 
 import React, { useId, useState } from "react";
 import { createFileRoute, useNavigate, getRouteApi } from "@tanstack/react-router";
-import { Phone, ArrowRight, ArrowLeft, ChevronsUpDown, Check, Delete } from "lucide-react";
+import { Phone, ArrowRight, ArrowLeft, ChevronsUpDown, Check, Delete, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { z } from "zod";
 
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { GooeySpinner } from "@/components/ui/gooey-spinner";
 import { cn } from "@/lib/utils";
+import { buildStoredPhone, getStoredElderCredentials } from "@/lib/elder-profile";
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList, CommandItem } from '@/components/ui/command';
@@ -56,6 +57,7 @@ function ElderSigninRoute() {
   const [selectedCountry, setSelectedCountry] = useState<CountryType>(COUNTRIES[0]);
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
+  const [credentialError, setCredentialError] = useState("");
 
   // Formateador automático centralizado para la entrada del teclado numérico
   const formatAndSetPhone = (raw: string) => {
@@ -68,6 +70,7 @@ function ElderSigninRoute() {
 
   // Manejadores del Teclado Numérico en pantalla
   const handleKeyPress = (num: string) => {
+    if (credentialError) setCredentialError("");
     if (currentStep === 1) {
       const raw = phone.replace(/\s/g, "");
       if (raw.length >= 9) return;
@@ -82,6 +85,7 @@ function ElderSigninRoute() {
   };
 
   const handleBackspace = () => {
+    if (credentialError) setCredentialError("");
     if (currentStep === 1) {
       const raw = phone.replace(/\s/g, "");
       if (raw.length === 0) return;
@@ -106,8 +110,20 @@ function ElderSigninRoute() {
     if (!isStepValid()) return;
 
     if (currentStep < 2) {
+      if (credentialError) setCredentialError("");
       navigate({ search: { step: currentStep + 1 } });
     } else {
+      const storedCredentials = getStoredElderCredentials();
+      if (storedCredentials) {
+        const enteredPhone = buildStoredPhone(selectedCountry.prefix, phone);
+        const enteredPin = otp.join("");
+
+        if (storedCredentials.phone !== enteredPhone || storedCredentials.pin !== enteredPin) {
+          setCredentialError("El teléfono o el PIN no coinciden con los configurados durante el alta.");
+          return;
+        }
+      }
+
       triggerSubmit();
     }
   };
@@ -130,6 +146,8 @@ function ElderSigninRoute() {
   const getStepCategory = () => {
     return currentStep === 1 ? "Identificación" : "Seguridad";
   };
+
+  const hasCredentialError = credentialError !== "";
 
   return (
     <AestheticLayout maxWidthClassName="max-w-md">
@@ -190,6 +208,7 @@ function ElderSigninRoute() {
                                   onSelect={() => {
                                     setSelectedCountry(country);
                                     setPopoverOpen(false);
+                                    if (credentialError) setCredentialError("");
                                   }}
                                 >
                                   <div className="flex items-center gap-2 overflow-hidden">
@@ -246,9 +265,23 @@ function ElderSigninRoute() {
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground/90 leading-normal pt-1">
-                    Usa las teclas de abajo para poner tus 4 números secretos.
-                  </p>
+                  <AnimatePresence mode="wait">
+                    {hasCredentialError ? (
+                      <motion.p
+                        initial={{ opacity: 0, y: -2 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -2 }}
+                        className="text-xs font-semibold text-red-600 flex items-center gap-1.5 pt-1.5"
+                      >
+                        <AlertCircle className="size-3.5" />
+                        {credentialError}
+                      </motion.p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground/90 leading-normal pt-1">
+                        Usa las teclas de abajo para poner tus 4 números secretos.
+                      </p>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
             )}

@@ -1,10 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Camera, ArrowLeft, Loader2, Radio, Send, Image as ImageIcon, FileAudio, Trash2, LogOut, FileText } from "lucide-react";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { Camera, ArrowLeft, Loader2, Radio, Send, Image as ImageIcon, FileAudio, Trash2, LogOut, FileText, RotateCcw } from "lucide-react";
+import { type JSX, useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { TextEffect } from "@/components/ui/text-effect";
 import { VoiceInput } from "@/components/ui/voice-input";
 import { FileUploadCard, UploadedFile } from "@/components/ui/file-upload-card"; 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useInView, MotionProps } from "framer-motion";
+import { getStoredElderName } from "@/lib/elder-profile";
 
 export const Route = createFileRoute("/copilot")({
   head: () => ({
@@ -24,25 +25,226 @@ function getGreeting() {
   return "Buenas noches";
 }
 
-type InteractionMode = "idle" | "listening" | "draft" | "processing" | "responding";
+const DEFAULT_ELDER_NAME = "Carmen";
 
-const mockResponses: Record<string, string> = {
-  audioOnly: "¡Hola! He escuchado tu mensaje. ¿En qué más puedo ayudarte hoy?",
-  imageOnly: "He revisado la imagen que me has subido. No te preocupes, es solo un aviso de actualización del banco. Puedes guardarla.",
-  textOnly: "He leído tu mensaje. El proceso que mencionas es completamente seguro. ¿Necesitas ayuda con algo más?",
-  combined: "He revisado la información que me has enviado. Todo está en orden, es solo un aviso rutinario del banco. No tienes que hacer nada.",
-};
+// COMPONENTE: EFECTO DE ESCRITURA CON OCULTACIÓN DE CURSOR AL FINALIZAR
+interface TypingEffectProps {
+  texts: string[];
+  className?: string;
+  rotationInterval?: number;
+  typingSpeed?: number;
+}
+
+function TypingEffect({
+  texts,
+  className,
+  rotationInterval = 2800,
+  typingSpeed = 75,
+}: TypingEffectProps) {
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true });
+
+  const currentText = texts[currentTextIndex % texts.length];
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    if (charIndex < currentText.length) {
+      const typingTimeout = setTimeout(() => {
+        setDisplayedText((prev) => prev + currentText.charAt(charIndex));
+        setCharIndex(charIndex + 1);
+      }, typingSpeed);
+      return () => clearTimeout(typingTimeout);
+    } else {
+      if (texts.length === 1) return;
+
+      const changeLabelTimeout = setTimeout(() => {
+        setDisplayedText("");
+        setCharIndex(0);
+        setCurrentTextIndex((prev) => (prev + 1) % texts.length);
+      }, rotationInterval);
+      return () => clearTimeout(changeLabelTimeout);
+    }
+  }, [charIndex, currentText, isInView, rotationInterval, typingSpeed, texts.length]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`relative inline-flex items-center justify-center text-center font-bold tracking-wide px-4 ${className || ""}`}
+    >
+      {displayedText}
+      {charIndex < currentText.length && (
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            duration: 0.6,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+          className="ml-1.5 h-[1em] w-1 rounded-sm bg-current inline-block"
+        />
+      )}
+    </div>
+  );
+}
+
+// COMPONENTE: TEXT SCRAMBLE 
+type TextScrambleProps = {
+  children: string;
+  duration?: number;
+  speed?: number;
+  characterSet?: string;
+  className?: string;
+  trigger?: boolean;
+  onScrambleComplete?: () => void;
+} & MotionProps;
+
+const defaultChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+function TextScramble({
+  children,
+  duration = 0.8,
+  speed = 0.04,
+  characterSet = defaultChars,
+  className,
+  trigger = true,
+  onScrambleComplete,
+  ...props
+}: TextScrambleProps) {
+  const [displayText, setDisplayText] = useState(children);
+
+  useEffect(() => {
+    if (!trigger) return;
+
+    const steps = duration / speed;
+    let step = 0;
+
+    const interval = setInterval(() => {
+      let scrambled = '';
+      const progress = step / steps;
+
+      for (let i = 0; i < children.length; i++) {
+        if (children[i] === ' ') {
+          scrambled += ' ';
+          continue;
+        }
+
+        if (progress * children.length > i) {
+          scrambled += children[i];
+        } else {
+          scrambled += characterSet[Math.floor(Math.random() * characterSet.length)];
+        }
+      }
+
+      setDisplayText(scrambled);
+      step++;
+
+      if (step > steps) {
+        clearInterval(interval);
+        setDisplayText(children);
+        onScrambleComplete?.();
+      }
+    }, speed * 1000);
+
+    return () => clearInterval(interval);
+  }, [trigger, children, duration, speed, characterSet, onScrambleComplete]);
+
+  return (
+    <motion.p className={className} {...props}>
+      {displayText}
+    </motion.p>
+  );
+}
+
+interface AnimatedHeartsProps {
+  text?: string;
+  count?: number;
+  colors?: string[];
+  animationDuration?: number;
+  fontSize?: string;
+  staggerDelay?: number;
+  heightFactor?: number;
+}
+
+function AnimatedHearts({
+  text = "✦",
+  count = 4,
+  colors = ["#10b981", "#06b6d4", "#3b82f6", "#6366f1", "#8b5cf6", "#d946ef", "#f43f5e", "#34d399", "#a7f3d0"], 
+  animationDuration = 2,
+  fontSize = "5rem", 
+  staggerDelay = 200,
+  heightFactor = 0.4, 
+}: AnimatedHeartsProps) {
+  const { rainbowEnd, rainbowEnd2 } = useMemo(() => {
+    let end1 = "";
+    let end2 = "";
+
+    colors.slice().reverse().forEach((c, i) => {
+      end1 += `,0 ${(i - 5) * heightFactor}vh ${i * 2}px ${c}`;
+    });
+
+    colors.forEach((c, i) => {
+      end2 += `,0 ${(i - 5) * -heightFactor}vh ${i * 2}px ${c}`;
+    });
+
+    return {
+      rainbowEnd: end1.substring(1),
+      rainbowEnd2: end2.substring(1),
+    };
+  }, [colors, heightFactor]);
+
+  return (
+    <div className="w-full flex gap-3 items-center justify-center h-24 my-2">
+      <h1 
+        className="font-black tracking-widest animate-pulse"
+        style={{
+          fontSize: fontSize,  
+          color: "transparent", 
+        }}
+      >
+        {Array.from({ length: count }, (_, i) => (
+          <motion.span
+            key={i}
+            className="px-1 inline-block"
+            animate={{
+              textShadow: [rainbowEnd, rainbowEnd2]
+            }}
+            transition={{
+              duration: animationDuration,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "reverse",
+              delay: (i * staggerDelay) / 1000 - 1 
+            }}
+          >
+            {text}
+          </motion.span>
+        ))}
+      </h1>
+    </div>
+  );
+}
+
+type InteractionMode = "idle" | "listening" | "draft" | "processing" | "responding";
 
 function Copilot() {
   const navigate = useNavigate(); 
   const [greetingText] = useState(getGreeting);
   const [mode, setMode] = useState<InteractionMode>("idle");
   const [response, setResponse] = useState("");
+  const [elderName, setElderName] = useState(DEFAULT_ELDER_NAME);
   
   const [hasAudio, setHasAudio] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | File | null>(null);
   const [hasImage, setHasImage] = useState(false);
-  const [textInput, setTextInput] = useState("");
   
+  const [textInput, setTextInput] = useState("");    
+  const [draftedText, setDraftedText] = useState(""); 
+
   const [showUploader, setShowUploader] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
@@ -58,12 +260,28 @@ function Copilot() {
   }, [imagePreviewUrl]);
 
   useEffect(() => {
+    const storedName = getStoredElderName();
+    if (storedName?.trim()) {
+      setElderName(storedName.trim());
+    }
+
     const introTimer = setTimeout(() => {
       setIsIntro(false);
     }, 3200); 
 
     return () => clearTimeout(introTimer);
-  }, []);
+  }, [getStoredElderName]);
+
+  const processingTexts = useMemo(
+    () => [
+      "Analizando la información...",
+      "Leyendo con atención...",
+      "Pensando en la mejor respuesta...",
+      "Preparando la contestación...",
+      `Casi listo, ${elderName}...`,
+    ],
+    [elderName],
+  );
 
   const handleLogout = useCallback(() => {
     navigate({ to: "/" });
@@ -94,7 +312,10 @@ function Copilot() {
     setMode("listening");
   }, []);
 
-  const handleVoiceStop = useCallback(() => {
+  const handleVoiceStop = useCallback((audioData?: Blob | File) => {
+    if (audioData) {
+      setAudioBlob(audioData);
+    }
     setHasAudio(true);
     setMode("draft");
   }, []);
@@ -142,37 +363,28 @@ function Copilot() {
       URL.revokeObjectURL(imagePreviewUrl);
       setImagePreviewUrl(null);
     }
-    if (!hasAudio && textInput.trim() === "") setMode("idle");
-  }, [hasAudio, textInput, imagePreviewUrl]);
+    if (draftedText.trim() === "" && !hasAudio) setMode("idle");
+  }, [hasAudio, draftedText, imagePreviewUrl]);
 
   const handleRemoveAudio = useCallback(() => {
     setHasAudio(false);
-    if (!hasImage && textInput.trim() === "") setMode("idle");
-  }, [hasImage, textInput]);
+    setAudioBlob(null);
+    if (!hasImage && draftedText.trim() === "") setMode("idle");
+  }, [hasImage, draftedText]);
 
-  const handleSendPayload = useCallback(() => {
-    setMode("processing");
-    
-    setTimeout(() => {
-      if ((hasAudio || textInput.trim() !== "") && hasImage) {
-        setResponse(mockResponses.combined);
-      } else if (hasImage) {
-        setResponse(mockResponses.imageOnly);
-      } else if (textInput.trim() !== "") {
-        setResponse(mockResponses.textOnly);
-      } else {
-        setResponse(mockResponses.audioOnly);
-      }
-      setMode("responding");
-    }, 2500);
-  }, [hasAudio, hasImage, textInput]);
+  const handleRemoveText = useCallback(() => {
+    setDraftedText("");
+    if (!hasImage && !hasAudio) setMode("idle");
+  }, [hasImage, hasAudio]);
 
-  const handleBack = useCallback(() => {
+  const handleResetScreen = useCallback(() => {
     setMode("idle");
     setResponse("");
     setHasAudio(false);
+    setAudioBlob(null);
     setHasImage(false);
     setTextInput("");
+    setDraftedText("");
     setUploadedFile(null);
     if (imagePreviewUrl) {
       URL.revokeObjectURL(imagePreviewUrl);
@@ -180,26 +392,87 @@ function Copilot() {
     }
   }, [imagePreviewUrl]);
 
+  const handleSendPayload = useCallback(async () => {
+    setMode("processing");
+    
+    try {
+      const formData = new FormData();
+      
+      if (hasImage && uploadedFile?.file) {
+        formData.append("image", uploadedFile.file);
+      }
+      
+      if (hasAudio && audioBlob) {
+        const filename = audioBlob instanceof File ? audioBlob.name : "navigation.m4a";
+        formData.append("audio", audioBlob, filename);
+      }
+      
+      if (draftedText.trim() !== "") {
+        formData.append("text", draftedText.trim());
+      }
+
+      const res = await fetch("https://209.38.213.186.sslip.io/webhook/c92e60c4-c6e8-4e46-9685-15a72025d50a", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error(`Server responded with status ${res.status}`);
+      }
+
+      const contentType = res.headers.get("content-type");
+      let dataText = "";
+      
+      if (contentType && contentType.includes("application/json")) {
+        const json = await res.json();
+        
+        if (json.spoke === "SCAM_DETECTION") {
+          dataText = json.evaluation?.user_defense_guidance || "Hemos detectado un riesgo. Por favor, mantén la calma y no realices ninguna acción económica.";
+        } else if (json.spoke === "C2_INTERFACE") {
+          dataText = json.elderly_guidance_es || "He analizado la pantalla de tu aplicación bancaria. Sigue las indicaciones reflejadas.";
+        } else if (json.spoke === "MANAGEMENT") {
+          dataText = json.answer || "He procesado tu consulta financiera.";
+        } else {
+          dataText = 
+            json.answer ||
+            json.elderly_guidance_es ||
+            json.evaluation?.user_defense_guidance || 
+            json.output || 
+            json.text || 
+            json.response || 
+            json.message ||
+            (typeof json === "string" ? json : JSON.stringify(json));
+        }
+      } else {
+        dataText = await res.text();
+      }
+
+      setResponse(dataText);
+      setMode("responding");
+    } catch (error) {
+      console.error("Workflow transmission error:", error);
+      setResponse("Lo siento, hubo un problema al conectarse con el asistente. Por favor, vuelve a intentarlo.");
+      setMode("responding");
+    }
+  }, [hasAudio, audioBlob, hasImage, uploadedFile, draftedText]);
+
   const handleTextSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (textInput.trim() !== "" || hasImage || hasAudio) {
+    if (textInput.trim() !== "") {
+      setDraftedText(prev => prev ? prev + " " + textInput.trim() : textInput.trim());
+      setTextInput(""); 
       setMode("draft");
     }
   };
 
-  const showInputArea = mode === "idle" || mode === "listening" || mode === "draft";
+  const isInputDisabled = mode === "listening" || mode === "processing";
 
   return (
     <div className="relative flex h-dvh w-full flex-col overflow-hidden">
-
-     <div className="fixed inset-0 -z-10 h-full w-full bg-white">
-        <div
-          className="absolute inset-0
-                    bg-[radial-gradient(rgba(52,211,153,0.5)_1px,transparent_1px)]
-                    [background-size:28px_28px]"
-        />
+      <div className="fixed inset-0 -z-10 h-full w-full bg-white">
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(52,211,153,0.5)_1px,transparent_1px)] [background-size:28px_28px]" />
       </div>
-      {/* Modal de subida de imagen */}
+
       <AnimatePresence>
         {showUploader && (
           <motion.div 
@@ -223,7 +496,7 @@ function Copilot() {
           ${isIntro ? 'opacity-100 scale-100 translate-y-0' : 'opacity-100 scale-[0.6] -translate-y-[40vh] md:-translate-y-[42vh]'}`}
       >
         <h1 className={`text-6xl sm:text-7xl md:text-8xl font-normal text-gray-900 text-center px-4 leading-tight transition-opacity duration-1000 ${isIntro ? 'animate-fade-in-up' : ''}`}>
-          {greetingText}, <br className={isIntro ? 'block md:hidden' : 'hidden'} /><span className="font-bold text-[#34d399]">Carmen</span>
+          {greetingText}, <br className={isIntro ? 'block md:hidden' : 'hidden'} /><span className="font-bold text-[#34d399]">{elderName}</span>
         </h1>
         
         <div className="mt-6 text-3xl sm:text-4xl text-gray-500 font-medium">
@@ -245,94 +518,67 @@ function Copilot() {
         </button>
       </header>
 
-      <section className={`flex flex-1 flex-col items-center justify-center p-6 text-center transition-opacity duration-700 delay-500 overflow-y-auto ${isIntro ? 'opacity-0' : 'opacity-100'}`}>
+      {/* ÁREA CENTRAL DE CONVERSACIÓN */}
+      <section className={`flex flex-1 flex-col items-center justify-start pt-32 sm:pt-40 p-6 text-center transition-opacity duration-700 delay-500 overflow-y-auto ${isIntro ? 'opacity-0' : 'opacity-100'}`}>
         
-        {mode === "idle" && (
-          <p className="text-2xl leading-relaxed text-gray-400 transition-opacity duration-300">
-            Escribe, habla o sube una foto.
-          </p>
+        {mode === "idle" && !isIntro && (
+          <TypingEffect
+            texts={["Escribe, habla o sube una foto con los botones inferiores."]}
+            /* CALIBRACIÓN DE UX: Se agrega max-w-none y whitespace-nowrap para mantener la frase fija en una sola línea */
+            className="text-3xl sm:text-4xl md:text-5xl text-gray-700 max-w-none mx-auto mt-16 leading-relaxed text-center tracking-tight whitespace-nowrap"
+            typingSpeed={60}
+          />
         )}
 
         {mode === "listening" && (
-          <div className="flex flex-col items-center gap-8 animate-in fade-in zoom-in duration-300">
+          <div className="flex flex-col items-center gap-6 mt-8 animate-in fade-in zoom-in duration-300">
             <div className="relative flex items-center justify-center">
-              <span className="absolute inline-flex h-32 w-32 animate-ping rounded-full bg-red-400 opacity-20" />
-              <span className="absolute inline-flex h-24 w-24 animate-pulse rounded-full bg-red-300 opacity-40" />
-              <span className="relative inline-flex h-20 w-20 items-center justify-center rounded-full bg-red-500 text-white shadow-lg shadow-red-500/30">
+              <span className="absolute inline-flex h-28 w-28 animate-ping rounded-full bg-red-400 opacity-20" />
+              <span className="relative inline-flex h-20 w-20 items-center justify-center rounded-full bg-red-500 text-white shadow-lg">
                 <Radio className="h-10 w-10 animate-pulse" strokeWidth={2} />
               </span>
             </div>
-            
-            <div className="space-y-3">
-              <p className="text-3xl font-bold tracking-tight text-gray-900">
-                Te escucho, Carmen...
-              </p>
-              <p className="text-xl font-medium text-red-500 animate-pulse">
-                Grabando audio
-              </p>
-              <p className="text-lg text-gray-500 max-w-xs mx-auto pt-2">
-                Habla con tranquilidad. Cuando termines, vuelve a tocar el botón de micrófono.
-              </p>
+            <div className="space-y-1">
+              <p className="text-2xl font-bold text-gray-900">Te escucho, {elderName}...</p>
+              <p className="text-lg text-gray-500">Vuelve a pulsar el botón rojo cuando termines.</p>
             </div>
           </div>
         )}
 
         {mode === "draft" && (
-          <div className="flex flex-col items-center gap-8 animate-in fade-in zoom-in duration-300 w-full max-w-md">
-            <div className="space-y-2">
-              <p className="text-3xl font-semibold text-gray-900">
-                ¡Listo para enviar!
-              </p>
-              <p className="text-xl text-gray-500">
-                Esto es lo que voy a analizar:
-              </p>
-            </div>
+          <div className="flex flex-col items-center gap-6 mt-4 animate-in fade-in zoom-in duration-300 w-full max-w-md">
+            <p className="text-2xl font-semibold text-gray-900">Esto es lo que voy a analizar:</p>
             
-            <div className="flex flex-wrap gap-6 w-full justify-center mt-2">
-              {textInput.trim() !== "" && (
-                <div className="relative flex flex-col items-center justify-center gap-3 p-4 border-2 border-blue-300 bg-blue-50 rounded-3xl w-36 sm:w-40 aspect-square shadow-sm animate-in pop-in duration-300">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center bg-white shadow-inner border border-blue-200">
-                    <FileText className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500" />
-                  </div>
-                  <span className="font-semibold text-blue-800 text-lg">Mensaje</span>
+            <div className="flex flex-wrap gap-4 w-full justify-center">
+              {draftedText.trim() !== "" && (
+                <div className="relative flex flex-col items-center justify-center gap-2 p-4 border-2 border-blue-300 bg-blue-50 rounded-2xl w-32 aspect-square shadow-sm">
+                  <button onClick={handleRemoveText} className="absolute -top-2 -right-2 bg-white text-red-500 border p-1.5 rounded-full shadow-md z-10 hover:bg-red-50">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  <FileText className="h-8 w-8 text-blue-500" />
+                  <span className="font-semibold text-blue-800 text-base">Texto</span>
                 </div>
               )}
 
               {hasImage && (
-                <div className="relative flex flex-col items-center justify-center gap-3 p-4 border-2 border-[#34d399] bg-emerald-50 rounded-3xl w-36 sm:w-40 aspect-square shadow-sm animate-in pop-in duration-300">
-                  <button
-                    onClick={handleRemoveImage}
-                    className="absolute -top-3 -right-3 bg-white text-red-500 border border-red-100 p-2 rounded-full shadow-md hover:bg-red-50 hover:text-red-600 hover:scale-110 transition-all z-10"
-                    aria-label="Eliminar foto"
-                  >
-                    <Trash2 className="w-5 h-5" />
+                <div className="relative flex flex-col items-center justify-center gap-2 p-4 border-2 border-[#34d399] bg-emerald-50 rounded-2xl w-32 aspect-square shadow-sm">
+                  <button onClick={handleRemoveImage} className="absolute -top-2 -right-2 bg-white text-red-500 border p-1.5 rounded-full shadow-md z-10 hover:bg-red-50">
+                    <Trash2 className="w-4 h-4" />
                   </button>
-                  
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shadow-inner border border-emerald-200 bg-white flex items-center justify-center">
-                    {imagePreviewUrl ? (
-                      <img src={imagePreviewUrl} className="w-full h-full object-cover" alt="Tu documento" />
-                    ) : (
-                      <ImageIcon className="h-8 w-8 text-emerald-400" />
-                    )}
+                  <div className="w-12 h-12 rounded-lg overflow-hidden border border-emerald-200 bg-white">
+                    {imagePreviewUrl ? <img src={imagePreviewUrl} className="w-full h-full object-cover" alt="Preview" /> : <ImageIcon className="h-6 w-6 text-emerald-400" />}
                   </div>
-                  <span className="font-semibold text-emerald-800 text-lg">Foto</span>
+                  <span className="font-semibold text-emerald-800 text-base">Foto</span>
                 </div>
               )}
               
               {hasAudio && (
-                <div className="relative flex flex-col items-center justify-center gap-3 p-4 border-2 border-[#34d399] bg-emerald-50 rounded-3xl w-36 sm:w-40 aspect-square shadow-sm animate-in pop-in duration-300">
-                  <button
-                    onClick={handleRemoveAudio}
-                    className="absolute -top-3 -right-3 bg-white text-red-500 border border-red-100 p-2 rounded-full shadow-md hover:bg-red-50 hover:text-red-600 hover:scale-110 transition-all z-10"
-                    aria-label="Eliminar audio"
-                  >
-                    <Trash2 className="w-5 h-5" />
+                <div className="relative flex flex-col items-center justify-center gap-2 p-4 border-2 border-[#34d399] bg-emerald-50 rounded-2xl w-32 aspect-square shadow-sm">
+                  <button onClick={handleRemoveAudio} className="absolute -top-2 -right-2 bg-white text-red-500 border p-1.5 rounded-full shadow-md z-10 hover:bg-red-50">
+                    <Trash2 className="w-4 h-4" />
                   </button>
-                  
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center bg-white shadow-inner border border-emerald-200">
-                    <FileAudio className="h-8 w-8 sm:h-10 sm:w-10 text-emerald-500" />
-                  </div>
-                  <span className="font-semibold text-emerald-800 text-lg">Audio</span>
+                  <FileAudio className="h-8 w-8 text-emerald-500" />
+                  <span className="font-semibold text-emerald-800 text-base">Audio</span>
                 </div>
               )}
             </div>
@@ -340,100 +586,101 @@ function Copilot() {
             <button
               type="button"
               onClick={handleSendPayload}
-              className="mt-4 w-full flex justify-center items-center gap-3 rounded-full bg-[#34d399] px-10 py-5 text-2xl font-bold text-gray-900 shadow-lg shadow-emerald-500/30 transition-transform hover:scale-105 active:scale-95"
+              className="w-full flex justify-center items-center gap-3 rounded-full bg-[#34d399] px-8 py-4 text-xl font-bold text-gray-900 shadow-md transition-transform hover:scale-105 active:scale-95"
             >
-              <Send className="h-7 w-7" />
-              Enviar al asistente
+              <Send className="h-6 w-6" />
+              Preguntar al asistente
             </button>
           </div>
         )}
 
         {mode === "processing" && (
-          <div className="flex flex-col items-center gap-6 animate-in fade-in duration-300">
-            <Loader2 className="h-16 w-16 text-[#34d399] animate-spin" strokeWidth={2} />
-            <p className="text-2xl font-medium text-gray-700">Pensando...</p>
+          <div className="flex flex-col items-center justify-center mt-6 animate-in fade-in duration-300 w-full gap-4">
+            <AnimatedHearts />
+            <TypingEffect texts={processingTexts} className="text-2xl sm:text-3xl text-gray-800" />
           </div>
         )}
 
         {mode === "responding" && (
-          <div className="flex flex-col items-center gap-8 animate-in slide-in-from-bottom-4 fade-in duration-500">
-            <div className="max-w-xl text-2xl font-medium leading-relaxed text-gray-900 sm:text-3xl bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <div className="flex flex-col items-center gap-8 animate-in slide-in-from-bottom-4 fade-in duration-500 w-full max-w-6xl px-6 sm:px-12">
+            <TextEffect 
+              per="word" 
+              preset="fade"
+              delay={0.05}
+              className="w-full text-3xl sm:text-4xl md:text-5xl font-medium leading-relaxed tracking-tight text-gray-900 text-center whitespace-pre-wrap"
+            >
               {response}
-            </div>
+            </TextEffect>
+
             <button
               type="button"
-              onClick={handleBack}
-              className="inline-flex items-center gap-2 rounded-2xl bg-gray-100/80 px-8 py-4 text-xl font-semibold text-gray-700 transition-colors hover:bg-gray-200 active:bg-gray-300"
-              aria-label="Volver al inicio"
+              onClick={handleResetScreen}
+              className="inline-flex items-center gap-3 rounded-full bg-[#34d399] text-gray-900 px-8 py-4 text-xl font-bold shadow-md transition-all hover:bg-emerald-400 hover:scale-105 active:scale-95 mt-4"
             >
-              <ArrowLeft className="h-6 w-6" />
-              Volver
+              <RotateCcw className="h-6 w-6" strokeWidth={2.5} />
+              Nueva consulta
             </button>
           </div>
         )}
       </section>
 
-      {/* ÁREA DE ENTRADA DE DATOS */}
-      {showInputArea && (
-        <div className={`w-full flex flex-col gap-4 p-6 pb-10 transition-all duration-700 delay-700 ${isIntro ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'}`}>
-          
-          {/* Componente de Texto */}
-          <form onSubmit={handleTextSubmit} className="relative w-full">
-            <input
-              type="text"
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
-              placeholder="Escribe tu mensaje aquí..."
-              disabled={mode === "listening"}
-              className="w-full rounded-2xl border-2 border-gray-200 bg-white px-6 py-5 text-xl font-medium text-gray-900 placeholder:text-gray-400 shadow-sm focus:border-[#34d399] focus:outline-none disabled:opacity-50 transition-colors"
-            />
-            {textInput.trim() !== "" && (
-              <button
-                type="button"
-                onClick={handleTextSubmit}
-                className="absolute right-3 top-3 bottom-3 flex aspect-square items-center justify-center rounded-xl bg-[#34d399] text-gray-900 transition-transform hover:scale-[1.02] active:scale-[0.98] shadow-sm"
-                aria-label="Añadir texto escrito"
-              >
-                <Send className="h-6 w-6" />
-              </button>
-            )}
-          </form>
-
-          {/* Botones de Voz e Imagen en Grid (Tamaño Original) */}
-          <div className="grid w-full grid-cols-2 gap-4">
-            <VoiceInput 
-              onStart={handleVoiceStart}
-              onStop={handleVoiceStop}
-              isSaved={hasAudio} 
-            />
-
-            <input 
-              type="file" 
-              ref={fileInputRef}
-              className="hidden" 
-              accept="image/*"
-              onChange={handleFileChange}
-              aria-hidden="true"
-            />
-
+      {/* BARRA DE CONTROL MULTIMODAL INFERIOR PERMANENTE */}
+      <div className={`w-full flex flex-col gap-4 p-6 pb-10 transition-all duration-700 delay-700 ${isIntro ? 'opacity-0 translate-y-10' : 'opacity-100 translate-y-0'}`}>
+        
+        <form onSubmit={handleTextSubmit} className="relative w-full">
+          <input
+            type="text"
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            placeholder="Escribe tu mensaje aquí..."
+            disabled={isInputDisabled}
+            className="w-full rounded-2xl border-2 border-gray-200 bg-white px-6 py-5 text-xl font-medium text-gray-900 placeholder:text-gray-400 shadow-sm focus:border-[#34d399] focus:outline-none disabled:opacity-40 transition-colors"
+          />
+          {textInput.trim() !== "" && !isInputDisabled && (
             <button
               type="button"
-              onClick={() => setShowUploader(true)}
-              disabled={mode === "listening"}
-              className={`flex w-full items-center justify-center gap-4 rounded-2xl border-2 py-6 text-xl font-semibold shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none
-                ${hasImage 
-                  ? "bg-blue-100 text-blue-700 border-blue-300 focus-visible:outline-blue-400" 
-                  : "bg-white text-gray-800 border-gray-200 focus-visible:outline-gray-400 hover:bg-gray-50"
-                }`}
-              aria-label="Subir una imagen"
+              onClick={handleTextSubmit}
+              className="absolute right-3 top-3 bottom-3 flex aspect-square items-center justify-center rounded-xl bg-[#34d399] text-gray-900 transition-transform hover:scale-[1.02] shadow-sm"
+              aria-label="Añadir texto escrito"
             >
-              <ImageIcon className="h-7 w-7" strokeWidth={2.5} />
-              {hasImage ? "Cambiar imagen" : "Subir imagen"}
+              <Send className="h-6 w-6" />
             </button>
-          </div>
+          )}
+        </form>
 
+        <div className="grid w-full grid-cols-2 gap-4">
+          <VoiceInput 
+            onStart={handleVoiceStart}
+            onStop={handleVoiceStop}
+            isSaved={hasAudio} 
+          />
+
+          <input 
+            type="file" 
+            ref={fileInputRef}
+            className="hidden" 
+            accept="image/*"
+            onChange={handleFileChange}
+            aria-hidden="true"
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowUploader(true)}
+            disabled={isInputDisabled}
+            className={`flex w-full items-center justify-center gap-4 rounded-2xl border-2 py-6 text-xl font-semibold shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none
+              ${hasImage 
+                ? "bg-blue-100 text-blue-700 border-blue-300" 
+                : "bg-white text-gray-800 border-gray-200 hover:bg-gray-50"
+              }`}
+            aria-label="Subir una imagen"
+          >
+            <ImageIcon className="h-7 w-7" strokeWidth={2.5} />
+            {hasImage ? "Cambiar imagen" : "Subir imagen"}
+          </button>
         </div>
-      )}
+
+      </div>
     </div>
   );
 }
