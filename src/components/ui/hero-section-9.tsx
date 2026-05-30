@@ -89,13 +89,14 @@ const HeroSection = ({ title, subtitle, actions, stats, images, className }: Her
                 typeof title === "string"
                   ? title
                   : React.Children.toArray(title)
-                      .map((c) =>
-                        typeof c === "string"
-                          ? c
-                          : React.isValidElement(c) && typeof c.props.children === "string"
-                            ? c.props.children
-                            : "",
-                      )
+                      .map((c) => {
+                        if (typeof c === "string") return c;
+                        if (React.isValidElement(c)) {
+                          const props = c.props as { children?: unknown };
+                          if (typeof props.children === "string") return props.children;
+                        }
+                        return "";
+                      })
                       .join(" ");
 
               const words = text.split(" ");

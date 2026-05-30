@@ -437,7 +437,7 @@ const FlagComponent = ({ country, countryName }: { country: keyof typeof flags; 
   const Flag = flags[country];
   return (
     <span className="flex h-3.5 w-5 overflow-hidden rounded-xs border border-zinc-200/50 shrink-0 select-none items-center justify-center bg-zinc-100">
-      {Flag && <Flag title={countryName} className="w-full h-full object-cover" />}
+      {Flag && <Flag title={countryName} />}
     </span>
   );
 };

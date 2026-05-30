@@ -37,7 +37,7 @@ const PhoneInput = React.forwardRef<React.ElementRef<typeof RPNInput.default>, P
         flagComponent={FlagComponent}
         countrySelectComponent={CountrySelect}
         inputComponent={InputComponent}
-        onChange={(value) => onChange?.(value || '')}
+        onChange={(value) => onChange?.((value || '') as RPNInput.Value)}
         {...props}
       />
     );
