@@ -151,7 +151,7 @@ export const SignUp2: React.FC<Props> = () => {
           </div>
         )}
 
-        <style jsx>{`
+        <style>{`
           @keyframes pop {
             0% { transform: scale(0.6); opacity: 0 }
             60% { transform: scale(1.05); opacity: 1 }
