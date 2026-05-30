@@ -10,8 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CopilotRouteImport } from './routes/copilot'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardFinanceRouteImport } from './routes/dashboard.finance'
+import { Route as DashboardActivityRouteImport } from './routes/dashboard.activity'
 import { Route as AuthSignupIndexRouteImport } from './routes/auth/signup/index'
 import { Route as AuthSigninIndexRouteImport } from './routes/auth/signin/index'
 import { Route as AuthSigninTutorRouteImport } from './routes/auth/signin/tutor'
@@ -24,6 +29,11 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CopilotRoute = CopilotRouteImport.update({
   id: '/copilot',
   path: '/copilot',
@@ -33,6 +43,26 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardFinanceRoute = DashboardFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardActivityRoute = DashboardActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const AuthSignupIndexRoute = AuthSignupIndexRouteImport.update({
   id: '/auth/signup/',
@@ -69,7 +99,12 @@ const AuthSignupTutorElderSetupRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/dashboard/activity': typeof DashboardActivityRoute
+  '/dashboard/finance': typeof DashboardFinanceRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/auth/signin/elder': typeof AuthSigninElderRoute
   '/auth/signin/tutor': typeof AuthSigninTutorRoute
   '/auth/signin/': typeof AuthSigninIndexRoute
@@ -81,6 +116,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
   '/pricing': typeof PricingRoute
+  '/dashboard/activity': typeof DashboardActivityRoute
+  '/dashboard/finance': typeof DashboardFinanceRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/auth/signin/elder': typeof AuthSigninElderRoute
   '/auth/signin/tutor': typeof AuthSigninTutorRoute
   '/auth/signin': typeof AuthSigninIndexRoute
@@ -92,7 +131,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/dashboard/activity': typeof DashboardActivityRoute
+  '/dashboard/finance': typeof DashboardFinanceRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/auth/signin/elder': typeof AuthSigninElderRoute
   '/auth/signin/tutor': typeof AuthSigninTutorRoute
   '/auth/signin/': typeof AuthSigninIndexRoute
@@ -105,7 +149,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/copilot'
+    | '/dashboard'
     | '/pricing'
+    | '/dashboard/activity'
+    | '/dashboard/finance'
+    | '/dashboard/settings'
+    | '/dashboard/'
     | '/auth/signin/elder'
     | '/auth/signin/tutor'
     | '/auth/signin/'
@@ -117,6 +166,10 @@ export interface FileRouteTypes {
     | '/'
     | '/copilot'
     | '/pricing'
+    | '/dashboard/activity'
+    | '/dashboard/finance'
+    | '/dashboard/settings'
+    | '/dashboard'
     | '/auth/signin/elder'
     | '/auth/signin/tutor'
     | '/auth/signin'
@@ -127,7 +180,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/copilot'
+    | '/dashboard'
     | '/pricing'
+    | '/dashboard/activity'
+    | '/dashboard/finance'
+    | '/dashboard/settings'
+    | '/dashboard/'
     | '/auth/signin/elder'
     | '/auth/signin/tutor'
     | '/auth/signin/'
@@ -139,6 +197,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CopilotRoute: typeof CopilotRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   PricingRoute: typeof PricingRoute
   AuthSigninElderRoute: typeof AuthSigninElderRoute
   AuthSigninTutorRoute: typeof AuthSigninTutorRoute
@@ -157,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/copilot': {
       id: '/copilot'
       path: '/copilot'
@@ -170,6 +236,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/finance': {
+      id: '/dashboard/finance'
+      path: '/finance'
+      fullPath: '/dashboard/finance'
+      preLoaderRoute: typeof DashboardFinanceRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/activity': {
+      id: '/dashboard/activity'
+      path: '/activity'
+      fullPath: '/dashboard/activity'
+      preLoaderRoute: typeof DashboardActivityRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/auth/signup/': {
       id: '/auth/signup/'
@@ -216,9 +310,28 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardActivityRoute: typeof DashboardActivityRoute
+  DashboardFinanceRoute: typeof DashboardFinanceRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardActivityRoute: DashboardActivityRoute,
+  DashboardFinanceRoute: DashboardFinanceRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CopilotRoute: CopilotRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   PricingRoute: PricingRoute,
   AuthSigninElderRoute: AuthSigninElderRoute,
   AuthSigninTutorRoute: AuthSigninTutorRoute,
@@ -230,13 +343,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

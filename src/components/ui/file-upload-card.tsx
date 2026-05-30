@@ -16,7 +16,8 @@ export interface UploadedFile {
   previewUrl?: string; // NUEVO: URL para la previsualización de la imagen
 }
 
-interface FileUploadCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface FileUploadCardProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onAnimationStart" | "onAnimationEnd" | "onAnimationIteration" | "onDragStart" | "onDragEnd" | "onDrag"> {
   files: UploadedFile[];
   onFilesChange: (files: File[]) => void;
   onFileRemove: (id: string) => void;
