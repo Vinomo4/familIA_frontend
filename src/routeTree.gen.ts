@@ -10,11 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as ElderRouteImport } from './routes/elder'
+import { Route as CopilotRouteImport } from './routes/copilot'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSignupIndexRouteImport } from './routes/auth/signup/index'
 import { Route as AuthSigninIndexRouteImport } from './routes/auth/signin/index'
 import { Route as AuthSigninTutorRouteImport } from './routes/auth/signin/tutor'
+import { Route as AuthSigninElderRouteImport } from './routes/auth/signin/elder'
 import { Route as AuthSignupTutorIndexRouteImport } from './routes/auth/signup/tutor/index'
 import { Route as AuthSignupTutorElderSetupRouteImport } from './routes/auth/signup/tutor/elder-setup'
 
@@ -23,9 +24,9 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ElderRoute = ElderRouteImport.update({
-  id: '/elder',
-  path: '/elder',
+const CopilotRoute = CopilotRouteImport.update({
+  id: '/copilot',
+  path: '/copilot',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -48,6 +49,11 @@ const AuthSigninTutorRoute = AuthSigninTutorRouteImport.update({
   path: '/auth/signin/tutor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthSigninElderRoute = AuthSigninElderRouteImport.update({
+  id: '/auth/signin/elder',
+  path: '/auth/signin/elder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthSignupTutorIndexRoute = AuthSignupTutorIndexRouteImport.update({
   id: '/auth/signup/tutor/',
   path: '/auth/signup/tutor/',
@@ -62,8 +68,9 @@ const AuthSignupTutorElderSetupRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/elder': typeof ElderRoute
+  '/copilot': typeof CopilotRoute
   '/pricing': typeof PricingRoute
+  '/auth/signin/elder': typeof AuthSigninElderRoute
   '/auth/signin/tutor': typeof AuthSigninTutorRoute
   '/auth/signin/': typeof AuthSigninIndexRoute
   '/auth/signup/': typeof AuthSignupIndexRoute
@@ -72,8 +79,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/elder': typeof ElderRoute
+  '/copilot': typeof CopilotRoute
   '/pricing': typeof PricingRoute
+  '/auth/signin/elder': typeof AuthSigninElderRoute
   '/auth/signin/tutor': typeof AuthSigninTutorRoute
   '/auth/signin': typeof AuthSigninIndexRoute
   '/auth/signup': typeof AuthSignupIndexRoute
@@ -83,8 +91,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/elder': typeof ElderRoute
+  '/copilot': typeof CopilotRoute
   '/pricing': typeof PricingRoute
+  '/auth/signin/elder': typeof AuthSigninElderRoute
   '/auth/signin/tutor': typeof AuthSigninTutorRoute
   '/auth/signin/': typeof AuthSigninIndexRoute
   '/auth/signup/': typeof AuthSignupIndexRoute
@@ -95,8 +104,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/elder'
+    | '/copilot'
     | '/pricing'
+    | '/auth/signin/elder'
     | '/auth/signin/tutor'
     | '/auth/signin/'
     | '/auth/signup/'
@@ -105,8 +115,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/elder'
+    | '/copilot'
     | '/pricing'
+    | '/auth/signin/elder'
     | '/auth/signin/tutor'
     | '/auth/signin'
     | '/auth/signup'
@@ -115,8 +126,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/elder'
+    | '/copilot'
     | '/pricing'
+    | '/auth/signin/elder'
     | '/auth/signin/tutor'
     | '/auth/signin/'
     | '/auth/signup/'
@@ -126,8 +138,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ElderRoute: typeof ElderRoute
+  CopilotRoute: typeof CopilotRoute
   PricingRoute: typeof PricingRoute
+  AuthSigninElderRoute: typeof AuthSigninElderRoute
   AuthSigninTutorRoute: typeof AuthSigninTutorRoute
   AuthSigninIndexRoute: typeof AuthSigninIndexRoute
   AuthSignupIndexRoute: typeof AuthSignupIndexRoute
@@ -144,11 +157,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/elder': {
-      id: '/elder'
-      path: '/elder'
-      fullPath: '/elder'
-      preLoaderRoute: typeof ElderRouteImport
+    '/copilot': {
+      id: '/copilot'
+      path: '/copilot'
+      fullPath: '/copilot'
+      preLoaderRoute: typeof CopilotRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -179,6 +192,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSigninTutorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/signin/elder': {
+      id: '/auth/signin/elder'
+      path: '/auth/signin/elder'
+      fullPath: '/auth/signin/elder'
+      preLoaderRoute: typeof AuthSigninElderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/signup/tutor/': {
       id: '/auth/signup/tutor/'
       path: '/auth/signup/tutor'
@@ -198,8 +218,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ElderRoute: ElderRoute,
+  CopilotRoute: CopilotRoute,
   PricingRoute: PricingRoute,
+  AuthSigninElderRoute: AuthSigninElderRoute,
   AuthSigninTutorRoute: AuthSigninTutorRoute,
   AuthSigninIndexRoute: AuthSigninIndexRoute,
   AuthSignupIndexRoute: AuthSignupIndexRoute,

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Mic, Camera, ShieldAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export const Route = createFileRoute("/elder")({
+export const Route = createFileRoute("/copilot")({
   head: () => ({
     meta: [
       { title: "FamilIA" },
