@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GooeySpinner } from "@/components/ui/gooey-spinner";
-import { AestheticLayout } from "@/components/ui/aesthetic-layout"; // <-- Import your new shared layout
+import { AestheticLayout } from "@/components/ui/aesthetic-layout";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/auth/signup/tutor/")({
@@ -78,12 +78,8 @@ function TutorSignup() {
 
   return (
     <AestheticLayout maxWidthClassName="max-w-md">
-      {/* Because this route needs a card layout container, we build the card shell 
-        explicitly inside the borderless master layout setup.
-      */}
       <div className="relative overflow-hidden rounded-2xl border border-border/40 bg-white p-8 shadow-md">
         
-        {/* Loading overlay remains mapped strictly inside the card dimensions */}
         {isLoading && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/95 p-6 text-center animate-in fade-in zoom-in-95 duration-200">
             <div className="flex flex-col items-center gap-6">
@@ -99,14 +95,11 @@ function TutorSignup() {
         )}
 
         <div className="flex flex-col items-center gap-2 text-center">
-          <div
-            className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border"
-            aria-hidden="true"
-          >
-            <svg className="stroke-zinc-800 dark:stroke-zinc-100" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
-              <circle cx="16" cy="16" r="12" fill="none" strokeWidth="8" />
-            </svg>
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="FamilIA Logo" 
+            className="mb-2 h-12 w-auto object-contain" 
+          />
           <h1 className="text-2xl font-semibold tracking-tight">Crea tu cuenta</h1>
           <p className="text-sm text-muted-foreground">
             Solo necesitamos algunos datos para empezar a proteger a tu familia.

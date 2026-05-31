@@ -1,15 +1,17 @@
+'use client';
+
 import { motion } from "framer-motion";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import React from "react";
 
-interface StatProps {
+export interface StatProps {
   value: string;
   label: string;
   icon: React.ReactNode;
 }
 
-interface ActionProps {
+export interface ActionProps {
   text: string;
   onClick?: () => void;
   href?: string;
@@ -17,8 +19,9 @@ interface ActionProps {
   className?: string;
 }
 
-interface HeroSectionProps {
-  title: React.ReactNode;
+export interface HeroSectionProps {
+  title: string;           // Vuelve a ser un string simple
+  highlightWord?: string;  // Nueva propiedad para el color
   subtitle: string;
   actions: ActionProps[];
   stats: StatProps[];
@@ -32,179 +35,151 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 };
 
+// --- RECUPERADOS LOS EFECTOS DE LAS PALABRAS ---
 const titleContainerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.06 } },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
 };
 
 const wordVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" as const } },
+  hidden: { opacity: 0, y: 15 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
 };
+// -----------------------------------------------
 
 const imageVariants = {
-  hidden: { opacity: 0, scale: 0.85 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: "easeOut" as const } },
+  hidden: { opacity: 0, scale: 0.85, y: 10 },
+  visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
 };
 
 const floatingVariants = {
   animate: {
-    y: [0, -10, 0],
-    transition: { duration: 4, repeat: Infinity, ease: "easeInOut" as const },
+    y: [0, -12, 0],
+    transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
   },
 };
 
-const HeroSection = ({ title, subtitle, actions, stats, images, className }: HeroSectionProps) => {
+export default function HeroSection({
+  title,
+  highlightWord,
+  subtitle,
+  actions,
+  stats,
+  images,
+  className,
+}: HeroSectionProps) {
   return (
-    <section
-      className={cn(
-        "relative overflow-hidden bg-gradient-to-b from-background via-background to-muted/40",
-        className,
-      )}
-    >
-      {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute top-1/3 -right-32 h-96 w-96 rounded-full bg-emerald-300/20 blur-3xl" />
-      </div>
-
+    <section className={cn("w-full overflow-hidden bg-background py-12 sm:py-24", className)}>
       <motion.div
+        className="container mx-auto grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-8 px-4"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="container mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-6 pt-8 pb-14 md:pt-12 md:pb-16 lg:grid-cols-2 lg:gap-14"
       >
-        {/* Left: Text */}
-        <div className="flex flex-col gap-8">
+        {/* Left Column: Text Content */}
+        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+          
+          {/* TÍTULO ANIMADO PALABRA POR PALABRA */}
           <motion.h1
+            className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl flex flex-wrap justify-center lg:justify-start"
             variants={titleContainerVariants}
-            className="text-3xl font-bold leading-[1.05] tracking-tight text-foreground md:text-4xl lg:text-5xl"
           >
-            {(() => {
-              const text =
-                typeof title === "string"
-                  ? title
-                  : React.Children.toArray(title)
-                      .map((c) => {
-                        if (typeof c === "string") return c;
-                        if (React.isValidElement(c)) {
-                          const props = c.props as { children?: unknown };
-                          if (typeof props.children === "string") return props.children;
-                        }
-                        return "";
-                      })
-                      .join(" ");
-
-              const words = text.split(" ");
-
-              return words.map((word, i) => {
-                const plain = word.replace(/\s+/g, "");
-                const needsGradient = /Independencia|Tranquilidad|Patrimonio/i.test(plain);
-                return (
-                  <motion.span key={i} variants={wordVariants} className="inline-block mr-2">
-                    {needsGradient ? (
-                      <span className="bg-gradient-to-r from-emerald-600 to-primary bg-clip-text text-transparent">
-                        {word}
-                      </span>
-                    ) : (
-                      word
-                    )}
-                    {i !== words.length - 1 ? " " : ""}
-                  </motion.span>
-                );
-              });
-            })()}
+            {title.split(" ").map((word, index) => {
+              // Comprueba si la palabra actual es la que queremos resaltar (ignorando mayúsculas/puntuación básica)
+              const isHighlighted = highlightWord && word.toLowerCase().includes(highlightWord.toLowerCase());
+              
+              return (
+                <motion.span
+                  key={index}
+                  variants={wordVariants}
+                  className={cn("mr-[0.25em]", isHighlighted ? "text-[#34d399]" : "")}
+                >
+                  {word}
+                </motion.span>
+              );
+            })}
           </motion.h1>
 
-          <motion.p
-            variants={itemVariants}
-            className="max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl"
-          >
+          <motion.p className="mt-6 max-w-md text-lg text-muted-foreground" variants={itemVariants}>
             {subtitle}
           </motion.p>
-
-          <motion.div variants={itemVariants} className="flex flex-wrap gap-3">
+          
+          <motion.div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start" variants={itemVariants}>
             {actions.map((action, index) => (
               <Button
                 key={index}
-                size="lg"
-                variant={action.variant ?? "default"}
                 onClick={action.onClick}
-                className={cn("h-12 rounded-full px-7 text-base", action.className)}
-                asChild={!!action.href}
+                variant={action.variant}
+                size="lg"
+                className={action.className}
               >
-                {action.href ? <a href={action.href}>{action.text}</a> : <span>{action.text}</span>}
+                {action.text}
               </Button>
             ))}
           </motion.div>
 
-          <motion.div
-            variants={itemVariants}
-            className="mt-4 grid grid-cols-3 gap-6 border-t border-border pt-8"
-          >
+          <motion.div className="mt-12 flex flex-col gap-6 lg:justify-start" variants={itemVariants}>
             {stats.map((stat, index) => (
-              <div key={index} className="flex flex-col items-start gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <div key={index} className="flex items-center gap-4 text-left">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted text-primary">
                   {stat.icon}
                 </div>
-                <div className="text-2xl font-semibold text-foreground">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div>
+                  <p className="text-lg font-bold text-foreground">{stat.value}</p>
+                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                </div>
               </div>
             ))}
           </motion.div>
         </div>
 
-        {/* Right: Image collage */}
-        <div className="relative h-[460px] w-full md:h-[560px]">
-          {/* Decorative shapes */}
-          <div className="absolute right-6 top-6 h-24 w-24 rounded-2xl bg-amber-300/40 blur-2xl" />
-          <div className="absolute bottom-10 left-2 h-28 w-28 rounded-full bg-emerald-300/40 blur-2xl" />
-          <div className="absolute right-1/3 bottom-1/4 h-16 w-16 rounded-xl bg-primary/30 blur-xl" />
+        {/* Right Column: Image Collage */}
+        <div className="relative h-[450px] w-full sm:h-[550px] max-w-xl mx-auto lg:mx-0">
+          <motion.div
+            className="absolute -top-4 left-1/4 h-16 w-16 rounded-full bg-[#34d399]/20"
+            variants={floatingVariants}
+            animate="animate"
+          />
+          <motion.div
+            className="absolute bottom-0 right-1/4 h-12 w-12 rounded-lg bg-blue-200/50"
+            variants={floatingVariants}
+            animate="animate"
+            style={{ transitionDelay: "0.5s" }}
+          />
 
           {images[0] && (
             <motion.div
+              className="absolute left-1/2 top-0 h-52 w-48 -translate-x-1/2 rounded-3xl overflow-hidden shadow-xl ring-1 ring-border sm:h-72 sm:w-60 z-10"
+              style={{ transformOrigin: "bottom center" }}
               variants={imageVariants}
-              className="absolute left-0 top-4 h-64 w-52 overflow-hidden rounded-3xl shadow-xl ring-1 ring-border md:h-72 md:w-60"
             >
-              <motion.img
-                variants={floatingVariants}
-                animate="animate"
-                src={images[0]}
-                alt=""
-                className="h-full w-full object-cover"
-              />
+              <img src={images[0]} alt="" className="h-full w-full object-cover" />
             </motion.div>
           )}
           {images[1] && (
             <motion.div
+              className="absolute right-0 top-1/3 h-48 w-44 rounded-3xl overflow-hidden shadow-xl ring-1 ring-border sm:h-64 sm:w-56 z-20"
+              style={{ transformOrigin: "left center" }}
               variants={imageVariants}
-              className="absolute right-2 top-0 h-56 w-44 overflow-hidden rounded-3xl shadow-xl ring-1 ring-border md:h-64 md:w-52"
             >
               <img src={images[1]} alt="" className="h-full w-full object-cover" />
             </motion.div>
           )}
           {images[2] && (
             <motion.div
+              className="absolute bottom-4 left-4 h-48 w-52 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-border sm:h-60 sm:w-72 z-30"
+              style={{ transformOrigin: "top right" }}
               variants={imageVariants}
-              className="absolute bottom-0 left-12 h-56 w-64 overflow-hidden rounded-3xl shadow-2xl ring-1 ring-border md:h-64 md:w-80"
             >
-              <motion.img
-                variants={floatingVariants}
-                animate="animate"
-                src={images[2]}
-                alt=""
-                className="h-full w-full object-cover"
-              />
+              <img src={images[2]} alt="" className="h-full w-full object-cover" />
             </motion.div>
           )}
         </div>
       </motion.div>
     </section>
   );
-};
-
-export default HeroSection;
+}

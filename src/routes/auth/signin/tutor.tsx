@@ -73,7 +73,6 @@ function TutorSignin() {
     setIsLoading(true);
 
     setTimeout(() => {
-      // Modificado para redirigir al área privada/dashboard tras autenticarse
       navigate({ to: "/dashboard" }); 
     }, 2000);
   };
@@ -82,7 +81,6 @@ function TutorSignin() {
     <AestheticLayout maxWidthClassName="max-w-md">
       <div className="relative overflow-hidden rounded-2xl border border-border/40 bg-white p-8 shadow-md">
         
-        {/* Loading overlay adaptado para la verificación de acceso */}
         {isLoading && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/95 p-6 text-center animate-in fade-in zoom-in-95 duration-200">
             <div className="flex flex-col items-center gap-6">
@@ -98,14 +96,11 @@ function TutorSignin() {
         )}
 
         <div className="flex flex-col items-center gap-2 text-center">
-          <div
-            className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border"
-            aria-hidden="true"
-          >
-            <svg className="stroke-zinc-800 dark:stroke-zinc-100" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
-              <circle cx="16" cy="16" r="12" fill="none" strokeWidth="8" />
-            </svg>
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="FamilIA Logo" 
+            className="mb-2 h-12 w-auto object-contain" 
+          />
           <h1 className="text-2xl font-semibold tracking-tight">Bienvenido de nuevo</h1>
           <p className="text-sm text-muted-foreground">
             Introduce tus datos de acceso para entrar a tu panel de gestión.

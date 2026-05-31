@@ -25,19 +25,19 @@ function Landing() {
       <SimpleHeader />
       <HeroSection
         title="Protege el dinero de tus padres sin quitarles su independencia."
+        highlightWord="independencia" // Le indicamos al componente qué palabra pintar de verde
         subtitle="Ellos usan una herramienta de voz muy sencilla para entender el banco. Tú recibes alertas en tiempo real ante comisiones abusivas o fraudes."
         actions={[
-          // Primary CTA: start signup flow
-          // Secondary CTA: elder -> share with family via WhatsApp or Web Share API
           {
             text: "Comenzar",
             onClick: () => navigate({ to: "/auth/signup" }),
             variant: "default",
+            className: "bg-[#34d399] hover:bg-[#2ebc89] text-gray-900",
           },
           {
             text: "Quiero que mi familia me lo instale",
             onClick: () => {
-              const message = `Hola, me gustaría que me instales FamilIA, un asistente de voz que me ayuda con mis gestiones bancarias y me protege de fraudes. ¿Podrías ayudarme? ${window.location.origin}/`;
+              const message = `Hola, me gustaría que me instales FamilIA, un asistente para ayudarme con el banco.`;
               if (navigator.share) {
                 navigator
                   .share({ title: "FamilIA — Ayúdame a instalarlo", text: message })
@@ -55,23 +55,23 @@ function Landing() {
           {
             value: "Bloqueo Anti-Fraude",
             label: "Detectamos y bloqueamos fraudes y enlaces maliciosos.",
-            icon: <ShieldCheck className="h-5 w-5" />,
+            icon: <ShieldCheck className="h-6 w-6" />,
           },
           {
             value: "Traductor Bancario",
             label: "Convertimos cartas y recibos en mensajes de voz claros.",
-            icon: <MessageCircle className="h-5 w-5" />,
+            icon: <MessageCircle className="h-6 w-6" />,
           },
           {
             value: "Cero Barreras Digitales",
             label: "Interfaz para la tercera edad: sin teclados ni contraseñas.",
-            icon: <Heart className="h-5 w-5" />,
+            icon: <Heart className="h-6 w-6" />,
           },
         ]}
         images={[
-          "https://images.unsplash.com/photo-1556889882-73ea40694a86?q=80&w=1200&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1581579186913-45ac3e6efe93?q=80&w=1200&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=1200&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1580869318757-a6c605b061ed?q=80&w=687&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1758523668802-53f1e40977ba?q=80&w=1332&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1758686254247-af5bc1f195a5?q=80&w=1332&auto=format&fit=crop",
         ]}
       />
     </main>
