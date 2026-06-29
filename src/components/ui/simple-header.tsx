@@ -12,11 +12,11 @@ export function SimpleHeader() {
   const links = [
     {
       label: "Funciones",
-      href: "#",
+      href: "#funciones",
     },
     {
       label: "Precios",
-      href: "/pricing",
+      href: "#precios",
     },
     {
       label: "Acerca de",
@@ -48,7 +48,12 @@ export function SimpleHeader() {
 
         <div className="hidden items-center gap-2 lg:flex">
           {links.map((link) => (
-            <a className={buttonVariants({ variant: "ghost" })} href={link.href} key={link.label}>
+            <a
+              className={buttonVariants({ variant: "ghost" })}
+              href={link.href}
+              onClick={() => setOpen(false)}
+              key={link.label}
+            >
               {link.label}
             </a>
           ))}
@@ -78,6 +83,7 @@ export function SimpleHeader() {
                     className: "justify-start",
                   })}
                   href={link.href}
+                  onClick={() => setOpen(false)}
                   key={link.label}
                 >
                   {link.label}
