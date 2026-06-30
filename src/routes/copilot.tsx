@@ -432,6 +432,8 @@ function Copilot() {
           dataText = json.elderly_guidance_es || "He analizado la pantalla de tu aplicación bancaria. Sigue las indicaciones reflejadas.";
         } else if (json.spoke === "MANAGEMENT") {
           dataText = json.answer || "He procesado tu consulta financiera.";
+        } else if (json.spoke === "C1_DOCUMENT") {
+          dataText = json.easy_explanation || "He analizado tu documento."; 
         } else {
           dataText = 
             json.answer ||
