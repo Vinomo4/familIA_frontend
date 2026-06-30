@@ -20,7 +20,7 @@ export function SimpleHeader() {
     },
     {
       label: "Acerca de",
-      href: "#",
+      href: "#nosotros",
     },
   ];
 
