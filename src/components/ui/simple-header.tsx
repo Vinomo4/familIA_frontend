@@ -1,7 +1,5 @@
 import React from "react";
-// Importamos Link también aquí para usarlo en el logo
 import { Link } from "@tanstack/react-router";
-// Eliminada la importación de Grid2x2PlusIcon ya que usaremos el PNG
 import { Sheet, SheetContent, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { MenuToggle } from "@/components/ui/menu-toggle";
@@ -27,24 +25,16 @@ export function SimpleHeader() {
   return (
     <header className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur-lg">
       <nav className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4">
-        {/* --- SECCIÓN DEL LOGO ACTUALIZADA --- */}
-        {/* Envolvemos todo en un Link para volver al inicio ('to="/"') */}
         <Link to="/" className="flex items-center gap-2.5 group">
-          {/* Etiqueta img estándar. Al empezar con '/', busca en la carpeta 'public'.
-            Asegúrate de que el nombre del archivo coincida (ej. logo.png).
-          */}
-          <img 
-            src="/logo.png" 
-            alt="FamilIA Logo" 
-            // Ajusta la altura (h-8 = 32px) según necesites. La anchura se ajusta sola.
-            className="h-10 w-auto block transition-transform group-hover:scale-105" 
+          <img
+            src="/logo.png"
+            alt="FamilIA Logo"
+            className="block h-10 w-auto transition-transform group-hover:scale-105"
           />
-          {/* Mantenemos el texto, pero cambiamos la fuente a sans para que sea más moderna */}
           <p className="text-xl font-bold text-gray-900">
             Famil<span className="text-[#34d399]">IA</span>
           </p>
         </Link>
-        {/* -------------------------------------- */}
 
         <div className="hidden items-center gap-2 lg:flex">
           {links.map((link) => (

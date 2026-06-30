@@ -146,8 +146,6 @@ function Landing() {
           "https://images.unsplash.com/photo-1758686254247-af5bc1f195a5?q=80&w=1332&auto=format&fit=crop",
         ]}
       />
-      
-      {/* SECCIÓN: FUNCIONES */}
       <section id="funciones" className="scroll-mt-24 px-4 pb-24 pt-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-emerald-100 bg-[linear-gradient(180deg,rgba(236,253,245,0.92),rgba(255,255,255,0.98))] shadow-[0_30px_90px_-40px_rgba(16,185,129,0.45)]">
           <div className="grid gap-8 px-6 py-8 sm:px-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:gap-10 lg:px-10 lg:py-10">
@@ -221,7 +219,6 @@ function Landing() {
         </div>
       </section>
 
-      {/* SECCIÓN: PRECIOS */}
       <section id="precios" className="scroll-mt-24 px-4 pb-12 pt-8 sm:px-6 lg:px-8 bg-white">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 max-w-2xl">
@@ -244,9 +241,8 @@ function Landing() {
         </div>
       </section>
 
-      {/* SECCIÓN: NOSOTROS (ÁREA DE TRANSICIÓN Y EQUIPO) */}
-      <section 
-        id="nosotros" 
+      <section
+        id="nosotros"
         className="scroll-mt-24 px-4 pt-16 pb-24 sm:pt-24 sm:px-6 lg:px-8 bg-gradient-to-b from-white via-emerald-50/80 to-emerald-100/80"
       >
         <div className="mx-auto max-w-7xl">
@@ -273,7 +269,6 @@ function Landing() {
               </p>
             </motion.div>
 
-            {/* Contenedor del equipo con título centrado */}
             <div className="flex flex-col gap-8 sm:gap-12">
               <motion.h3 
                 initial={{ opacity: 0, y: 12 }}
@@ -299,7 +294,6 @@ function Landing() {
                       <img
                         src={member.image}
                         alt={member.name}
-                        // Aquí aplicamos el filtro de blanco y negro y su transición a color al hacer hover
                         className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:scale-[1.03] group-hover:grayscale-0"
                       />
                       
