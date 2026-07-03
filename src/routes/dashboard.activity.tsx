@@ -3,7 +3,13 @@ import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 
 import { Card } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { mockActivity, type EventType, type Severity } from "@/lib/dashboard-mocks";
 
@@ -25,8 +31,14 @@ function ActivityPage() {
 
   return (
     <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-        <h1 className="text-3xl font-semibold tracking-tight text-gray-900">Historial de actividad</h1>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
+          Historial de actividad
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Auditoría cronológica y anonimizada de las interacciones del asistente.
         </p>
@@ -37,7 +49,10 @@ function ActivityPage() {
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-muted-foreground">Tipo</label>
-              <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as typeof typeFilter)}>
+              <Select
+                value={typeFilter}
+                onValueChange={(v) => setTypeFilter(v as typeof typeFilter)}
+              >
                 <SelectTrigger className="w-44">
                   <SelectValue />
                 </SelectTrigger>

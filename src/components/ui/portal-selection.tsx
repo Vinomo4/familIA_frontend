@@ -8,8 +8,8 @@ interface CardConfig {
   title: string;
   description: string;
   linkText: string;
-  linkTo?: string;      // 
-  onClick?: () => void; // 
+  linkTo?: string; //
+  onClick?: () => void; //
 }
 
 interface PortalSelectionProps {
@@ -30,7 +30,8 @@ export function PortalSelection({
   const cardBaseClass =
     "group relative flex h-full flex-col justify-between gap-8 overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-8 shadow-[0_18px_50px_-24px_rgba(0,0,0,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-border/90 hover:bg-card/90";
 
-  const actionClass = "group inline-flex items-center gap-2 text-base font-semibold text-primary cursor-pointer text-left bg-transparent p-0 border-none outline-none";
+  const actionClass =
+    "group inline-flex items-center gap-2 text-base font-semibold text-primary cursor-pointer text-left bg-transparent p-0 border-none outline-none";
 
   return (
     <AestheticLayout maxWidthClassName="max-w-6xl" className="pt-2 pb-6">
@@ -39,9 +40,7 @@ export function PortalSelection({
         <h1 className="text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
           {pageTitle}
         </h1>
-        <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
-          {pageSubtitle}
-        </p>
+        <p className="max-w-2xl text-base text-muted-foreground md:text-lg">{pageSubtitle}</p>
       </div>
 
       {/* Grid containing both portal choices */}
@@ -58,10 +57,8 @@ export function PortalSelection({
             </span>
             <h2 className="text-2xl font-semibold md:text-3xl">{tutorConfig.title}</h2>
           </div>
-          <p className="text-sm text-muted-foreground md:text-base">
-            {tutorConfig.description}
-          </p>
-          
+          <p className="text-sm text-muted-foreground md:text-base">{tutorConfig.description}</p>
+
           {/* Renderizado Condicional: Botón o Enlace de Ruta */}
           {tutorConfig.onClick ? (
             <button type="button" onClick={tutorConfig.onClick} className={actionClass}>
@@ -88,10 +85,8 @@ export function PortalSelection({
             </span>
             <h2 className="text-2xl font-semibold md:text-3xl">{elderConfig.title}</h2>
           </div>
-          <p className="text-sm text-muted-foreground md:text-base">
-            {elderConfig.description}
-          </p>
-          
+          <p className="text-sm text-muted-foreground md:text-base">{elderConfig.description}</p>
+
           {/* Renderizado Condicional: Botón o Enlace de Ruta */}
           {elderConfig.onClick ? (
             <button type="button" onClick={elderConfig.onClick} className={actionClass}>

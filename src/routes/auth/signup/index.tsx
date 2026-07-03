@@ -21,11 +21,9 @@ function AuthSignup() {
     const message = `Hola, me gustaría que me instales FamilIA, un asistente de voz que me ayuda con mis gestiones bancarias y me protege de fraudes. ¿Podrías ayudarme? ${window.location.origin}/?ref=elder`;
 
     if (navigator.share) {
-      navigator
-        .share({ title: "FamilIA — Ayúdame a instalarlo", text: message })
-        .catch(() => {
-          window.location.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
-        });
+      navigator.share({ title: "FamilIA — Ayúdame a instalarlo", text: message }).catch(() => {
+        window.location.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
+      });
     } else {
       window.location.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
     }
@@ -37,13 +35,15 @@ function AuthSignup() {
       pageSubtitle="Selecciona el tipo de cuenta que deseas crear para comenzar"
       tutorConfig={{
         title: "Registro Tutor",
-        description: "Crea tu perfil para configurar el espacio seguro de tus padres, gestionar su suscripción y coordinar alertas de seguridad.",
+        description:
+          "Crea tu perfil para configurar el espacio seguro de tus padres, gestionar su suscripción y coordinar alertas de seguridad.",
         linkText: "Registrarme como familiar",
         linkTo: "/auth/signup/tutor",
       }}
       elderConfig={{
         title: "Registro para Mayores",
-        description: "Pide ayuda a tu familia para empezar a disfrutar de tu propio asistente de voz sin lidiar con contraseñas ni procesos complejos.",
+        description:
+          "Pide ayuda a tu familia para empezar a disfrutar de tu propio asistente de voz sin lidiar con contraseñas ni procesos complejos.",
         linkText: "Quiero que mi familia me lo instale",
         onClick: handleElderShare, // 👈 Pasamos la función nativa en lugar de linkTo
       }}

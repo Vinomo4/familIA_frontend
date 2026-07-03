@@ -7,7 +7,10 @@ export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
       { title: "Panel del tutor — FamilIA" },
-      { name: "description", content: "Supervisa, protege y acompaña a tus mayores desde un solo lugar." },
+      {
+        name: "description",
+        content: "Supervisa, protege y acompaña a tus mayores desde un solo lugar.",
+      },
     ],
   }),
   component: DashboardLayout,

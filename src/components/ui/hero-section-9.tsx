@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { motion } from "framer-motion";
 import { Button, type ButtonProps } from "@/components/ui/button";
@@ -64,7 +64,12 @@ const wordVariants = {
 
 const imageVariants = {
   hidden: { opacity: 0, scale: 0.85, y: 10 },
-  visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const } },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+  },
 } as const;
 
 const floatingVariants = {
@@ -97,8 +102,9 @@ export default function HeroSection({
             variants={titleContainerVariants as any}
           >
             {title.split(" ").map((word, index) => {
-              const isHighlighted = highlightWord && word.toLowerCase().includes(highlightWord.toLowerCase());
-              
+              const isHighlighted =
+                highlightWord && word.toLowerCase().includes(highlightWord.toLowerCase());
+
               return (
                 <motion.span
                   key={index}
@@ -111,11 +117,17 @@ export default function HeroSection({
             })}
           </motion.h1>
 
-          <motion.p className="mt-6 max-w-md text-lg text-muted-foreground" variants={itemVariants as any}>
+          <motion.p
+            className="mt-6 max-w-md text-lg text-muted-foreground"
+            variants={itemVariants as any}
+          >
             {subtitle}
           </motion.p>
-          
-          <motion.div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start" variants={itemVariants as any}>
+
+          <motion.div
+            className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start"
+            variants={itemVariants as any}
+          >
             {actions.map((action, index) => (
               <Button
                 key={index}
@@ -129,7 +141,10 @@ export default function HeroSection({
             ))}
           </motion.div>
 
-          <motion.div className="mt-12 flex flex-col gap-6 lg:justify-start" variants={itemVariants as any}>
+          <motion.div
+            className="mt-12 flex flex-col gap-6 lg:justify-start"
+            variants={itemVariants as any}
+          >
             {stats.map((stat, index) => (
               <div key={index} className="flex items-center gap-4 text-left">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted text-primary">

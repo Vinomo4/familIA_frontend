@@ -13,7 +13,14 @@ interface MetricCardProps {
   delay?: number;
 }
 
-export function MetricCard({ icon: Icon, label, value, delta, accent = "text-primary", delay = 0 }: MetricCardProps) {
+export function MetricCard({
+  icon: Icon,
+  label,
+  value,
+  delta,
+  accent = "text-primary",
+  delay = 0,
+}: MetricCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -23,7 +30,9 @@ export function MetricCard({ icon: Icon, label, value, delta, accent = "text-pri
       <Card className="rounded-2xl border-border/40 p-5 shadow-sm">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {label}
+            </p>
             <p className="mt-2 text-3xl font-semibold tracking-tight text-gray-900">{value}</p>
             {delta && (
               <p
@@ -36,7 +45,9 @@ export function MetricCard({ icon: Icon, label, value, delta, accent = "text-pri
               </p>
             )}
           </div>
-          <div className={cn("flex size-10 items-center justify-center rounded-xl bg-muted", accent)}>
+          <div
+            className={cn("flex size-10 items-center justify-center rounded-xl bg-muted", accent)}
+          >
             <Icon className="h-5 w-5" />
           </div>
         </div>

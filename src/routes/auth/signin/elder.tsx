@@ -1,12 +1,20 @@
-'use client';
+"use client";
 
 import React, { useId, useState } from "react";
 import { createFileRoute, useNavigate, getRouteApi } from "@tanstack/react-router";
-import { Phone, ArrowRight, ArrowLeft, ChevronsUpDown, Check, Delete, AlertCircle } from "lucide-react";
+import {
+  Phone,
+  ArrowRight,
+  ArrowLeft,
+  ChevronsUpDown,
+  Check,
+  Delete,
+  AlertCircle,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { z } from "zod";
 
-import flags from 'react-phone-number-input/flags';
+import flags from "react-phone-number-input/flags";
 
 import { AestheticLayout } from "@/components/ui/aesthetic-layout";
 import { Button } from "@/components/ui/button";
@@ -15,24 +23,31 @@ import { GooeySpinner } from "@/components/ui/gooey-spinner";
 import { cn } from "@/lib/utils";
 import { buildStoredPhone, getStoredElderCredentials } from "@/lib/elder-profile";
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList, CommandItem } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandList,
+  CommandItem,
+} from "@/components/ui/command";
 
 const COUNTRIES = [
-  { code: 'ES', prefix: '+34', name: 'España' },
-  { code: 'US', prefix: '+1', name: 'Estados Unidos' },
-  { code: 'MX', prefix: '+52', name: 'México' },
-  { code: 'AR', prefix: '+54', name: 'Argentina' },
-  { code: 'CL', prefix: '+56', name: 'Chile' },
-  { code: 'CO', prefix: '+57', name: 'Colombia' },
-  { code: 'PE', prefix: '+51', name: 'Perú' },
-  { code: 'GB', prefix: '+44', name: 'Reino Unido' },
-  { code: 'FR', prefix: '+33', name: 'Francia' },
-  { code: 'DE', prefix: '+49', name: 'Alemania' },
-  { code: 'PT', prefix: '+351', name: 'Portugal' },
+  { code: "ES", prefix: "+34", name: "España" },
+  { code: "US", prefix: "+1", name: "Estados Unidos" },
+  { code: "MX", prefix: "+52", name: "México" },
+  { code: "AR", prefix: "+54", name: "Argentina" },
+  { code: "CL", prefix: "+56", name: "Chile" },
+  { code: "CO", prefix: "+57", name: "Colombia" },
+  { code: "PE", prefix: "+51", name: "Perú" },
+  { code: "GB", prefix: "+44", name: "Reino Unido" },
+  { code: "FR", prefix: "+33", name: "Francia" },
+  { code: "DE", prefix: "+49", name: "Alemania" },
+  { code: "PT", prefix: "+351", name: "Portugal" },
 ] as const;
 
-type CountryType = typeof COUNTRIES[number];
+type CountryType = (typeof COUNTRIES)[number];
 
 const elderSigninSearchSchema = z.object({
   step: z.coerce.number().min(1).max(2).catch(1),
@@ -52,7 +67,7 @@ function ElderSigninRoute() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
-  
+
   // Estados del formulario
   const [selectedCountry, setSelectedCountry] = useState<CountryType>(COUNTRIES[0]);
   const [phone, setPhone] = useState("");
@@ -64,7 +79,8 @@ function ElderSigninRoute() {
     let formatted = raw;
     if (raw.length > 3) formatted = `${raw.slice(0, 3)} ${raw.slice(3)}`;
     if (raw.length > 5) formatted = `${raw.slice(0, 3)} ${raw.slice(3, 5)} ${raw.slice(5)}`;
-    if (raw.length > 7) formatted = `${raw.slice(0, 3)} ${raw.slice(3, 5)} ${raw.slice(5, 7)} ${raw.slice(7)}`;
+    if (raw.length > 7)
+      formatted = `${raw.slice(0, 3)} ${raw.slice(3, 5)} ${raw.slice(5, 7)} ${raw.slice(7)}`;
     setPhone(formatted);
   };
 
@@ -119,7 +135,9 @@ function ElderSigninRoute() {
         const enteredPin = otp.join("");
 
         if (storedCredentials.phone !== enteredPhone || storedCredentials.pin !== enteredPin) {
-          setCredentialError("El teléfono o el PIN no coinciden con los configurados durante el alta.");
+          setCredentialError(
+            "El teléfono o el PIN no coinciden con los configurados durante el alta.",
+          );
           return;
         }
       }
@@ -133,7 +151,7 @@ function ElderSigninRoute() {
     setTimeout(() => {
       setIsLoading(false);
       // Redirección actualizada hacia la página de copilot
-      navigate({ to: "/copilot" }); 
+      navigate({ to: "/copilot" });
     }, 2500);
   };
 
@@ -152,7 +170,6 @@ function ElderSigninRoute() {
   return (
     <AestheticLayout maxWidthClassName="max-w-md">
       <div className="w-full bg-white border border-gray-100 shadow-md rounded-2xl relative overflow-hidden p-6 sm:p-8 space-y-6">
-        
         {/* Capa de carga */}
         {isLoading && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/95 p-6 text-center">
@@ -174,7 +191,13 @@ function ElderSigninRoute() {
           </div>
           <div className="grid grid-cols-2 gap-1.5 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
             {[1, 2].map((index) => (
-              <div key={index} className={cn("h-full rounded-full transition-all duration-300", index <= currentStep ? "bg-zinc-900" : "bg-gray-100")} />
+              <div
+                key={index}
+                className={cn(
+                  "h-full rounded-full transition-all duration-300",
+                  index <= currentStep ? "bg-zinc-900" : "bg-gray-100",
+                )}
+              />
             ))}
           </div>
         </div>
@@ -183,15 +206,30 @@ function ElderSigninRoute() {
         <form onSubmit={handleNextStep} className="space-y-6 flex flex-col justify-between">
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
-              <motion.div key="step-1" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-4 text-left">
-                <h2 className="text-xl font-bold text-gray-900 tracking-tight">Introduce tu número de móvil</h2>
+              <motion.div
+                key="step-1"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="space-y-4 text-left"
+              >
+                <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                  Introduce tu número de móvil
+                </h2>
                 <div className="space-y-2 pt-2">
                   <Label htmlFor={`${id}-phone`}>Teléfono móvil</Label>
                   <div className="flex gap-2">
                     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
                       <PopoverTrigger asChild>
-                        <Button type="button" variant="outline" className="flex rounded-xl px-3 h-11 border border-gray-200 shrink-0 gap-2 items-center justify-between bg-white text-gray-800 focus-visible:ring-[#34d399]/20 focus-visible:border-[#34d399]">
-                          <FlagComponent country={selectedCountry.code} countryName={selectedCountry.name} />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="flex rounded-xl px-3 h-11 border border-gray-200 shrink-0 gap-2 items-center justify-between bg-white text-gray-800 focus-visible:ring-[#34d399]/20 focus-visible:border-[#34d399]"
+                        >
+                          <FlagComponent
+                            country={selectedCountry.code}
+                            countryName={selectedCountry.name}
+                          />
                           <ChevronsUpDown className="h-3 w-3 opacity-50 shrink-0" />
                         </Button>
                       </PopoverTrigger>
@@ -212,12 +250,26 @@ function ElderSigninRoute() {
                                   }}
                                 >
                                   <div className="flex items-center gap-2 overflow-hidden">
-                                    <FlagComponent country={country.code} countryName={country.name} />
-                                    <span className="text-sm font-medium text-gray-900 truncate">{country.name}</span>
+                                    <FlagComponent
+                                      country={country.code}
+                                      countryName={country.name}
+                                    />
+                                    <span className="text-sm font-medium text-gray-900 truncate">
+                                      {country.name}
+                                    </span>
                                   </div>
                                   <div className="flex items-center gap-2 shrink-0">
-                                    <span className="text-muted-foreground text-xs font-mono">{country.prefix}</span>
-                                    <Check className={cn('h-3.5 w-3.5 text-zinc-900', country.code === selectedCountry.code ? 'opacity-100' : 'opacity-0')} />
+                                    <span className="text-muted-foreground text-xs font-mono">
+                                      {country.prefix}
+                                    </span>
+                                    <Check
+                                      className={cn(
+                                        "h-3.5 w-3.5 text-zinc-900",
+                                        country.code === selectedCountry.code
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
                                   </div>
                                 </CommandItem>
                               ))}
@@ -238,20 +290,32 @@ function ElderSigninRoute() {
                         type="text"
                         readOnly
                         value={phone}
-                        className={cn("h-11 w-full bg-gray-50/50 pointer-events-none selection:bg-transparent", selectedCountry.prefix.length === 3 ? "pl-18" : "pl-20")}
+                        className={cn(
+                          "h-11 w-full bg-gray-50/50 pointer-events-none selection:bg-transparent",
+                          selectedCountry.prefix.length === 3 ? "pl-18" : "pl-20",
+                        )}
                       />
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground/90 leading-normal">
-                    Toca los números de abajo para escribir el teléfono con el que tu tutor te dio de alta.
+                    Toca los números de abajo para escribir el teléfono con el que tu tutor te dio
+                    de alta.
                   </p>
                 </div>
               </motion.div>
             )}
 
             {currentStep === 2 && (
-              <motion.div key="step-2" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-4 text-left">
-                <h2 className="text-xl font-bold text-gray-900 tracking-tight">Introduce tu clave de acceso</h2>
+              <motion.div
+                key="step-2"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="space-y-4 text-left"
+              >
+                <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                  Introduce tu clave de acceso
+                </h2>
                 <div className="space-y-2 pt-2">
                   <Label>PIN de 4 dígitos</Label>
                   <div className="flex gap-2.5 justify-start">
@@ -293,10 +357,10 @@ function ElderSigninRoute() {
           {/* Panel inferior de navegación */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-4">
             {currentStep > 1 ? (
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={handlePrevStep} 
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handlePrevStep}
                 className="cursor-pointer h-10 px-4 text-xs font-medium text-gray-600 border-gray-200"
               >
                 <ArrowLeft className="mr-2 size-3.5" />
@@ -312,7 +376,9 @@ function ElderSigninRoute() {
                 disabled={!isStepValid()}
                 className={cn(
                   "cursor-pointer h-10 px-5 text-xs font-medium shadow-sm flex items-center gap-1.5 text-white transition-colors",
-                  currentStep === 2 ? "bg-[#00966d] hover:bg-[#007d5a]" : "bg-zinc-900 hover:bg-zinc-800"
+                  currentStep === 2
+                    ? "bg-[#00966d] hover:bg-[#007d5a]"
+                    : "bg-zinc-900 hover:bg-zinc-800",
                 )}
               >
                 {currentStep === 2 ? "Entrar" : "Continuar"}
@@ -326,9 +392,15 @@ function ElderSigninRoute() {
   );
 }
 
-function Keypad({ onKeyPress, onBackspace }: { onKeyPress: (num: string) => void; onBackspace: () => void }) {
+function Keypad({
+  onKeyPress,
+  onBackspace,
+}: {
+  onKeyPress: (num: string) => void;
+  onBackspace: () => void;
+}) {
   const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-  
+
   return (
     <div className="w-full max-w-[320px] mx-auto grid grid-cols-3 gap-3 pt-2 bg-zinc-50/50 p-3 rounded-2xl border border-gray-100">
       {digits.map((num) => (
@@ -378,7 +450,13 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
 );
 Input.displayName = "Input";
 
-const FlagComponent = ({ country, countryName }: { country: keyof typeof flags; countryName: string }) => {
+const FlagComponent = ({
+  country,
+  countryName,
+}: {
+  country: keyof typeof flags;
+  countryName: string;
+}) => {
   const Flag = flags[country];
   return (
     <span className="flex h-3.5 w-5 overflow-hidden rounded-xs border border-zinc-200/50 shrink-0 select-none items-center justify-center bg-zinc-100">
@@ -386,4 +464,4 @@ const FlagComponent = ({ country, countryName }: { country: keyof typeof flags; 
     </span>
   );
 };
-FlagComponent.displayName = 'FlagComponent';
+FlagComponent.displayName = "FlagComponent";

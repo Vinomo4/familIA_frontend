@@ -1,12 +1,21 @@
-'use client';
+"use client";
 
 import React, { useId, useState, useRef } from "react";
 import { createFileRoute, useNavigate, getRouteApi } from "@tanstack/react-router";
-import { Phone, UserRound, Wallet, ArrowRight, ArrowLeft, ChevronsUpDown, Check, AlertCircle } from "lucide-react";
+import {
+  Phone,
+  UserRound,
+  Wallet,
+  ArrowRight,
+  ArrowLeft,
+  ChevronsUpDown,
+  Check,
+  AlertCircle,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { z } from "zod";
 
-import flags from 'react-phone-number-input/flags';
+import flags from "react-phone-number-input/flags";
 
 import { AestheticLayout } from "@/components/ui/aesthetic-layout";
 import { Button } from "@/components/ui/button";
@@ -15,24 +24,31 @@ import { GooeySpinner } from "@/components/ui/gooey-spinner";
 import { cn } from "@/lib/utils";
 import { storeElderProfile } from "@/lib/elder-profile";
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList, CommandItem } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandList,
+  CommandItem,
+} from "@/components/ui/command";
 
 const COUNTRIES = [
-  { code: 'ES', prefix: '+34', name: 'España' },
-  { code: 'US', prefix: '+1', name: 'Estados Unidos' },
-  { code: 'MX', prefix: '+52', name: 'México' },
-  { code: 'AR', prefix: '+54', name: 'Argentina' },
-  { code: 'CL', prefix: '+56', name: 'Chile' },
-  { code: 'CO', prefix: '+57', name: 'Colombia' },
-  { code: 'PE', prefix: '+51', name: 'Perú' },
-  { code: 'GB', prefix: '+44', name: 'Reino Unido' },
-  { code: 'FR', prefix: '+33', name: 'Francia' },
-  { code: 'DE', prefix: '+49', name: 'Alemania' },
-  { code: 'PT', prefix: '+351', name: 'Portugal' },
+  { code: "ES", prefix: "+34", name: "España" },
+  { code: "US", prefix: "+1", name: "Estados Unidos" },
+  { code: "MX", prefix: "+52", name: "México" },
+  { code: "AR", prefix: "+54", name: "Argentina" },
+  { code: "CL", prefix: "+56", name: "Chile" },
+  { code: "CO", prefix: "+57", name: "Colombia" },
+  { code: "PE", prefix: "+51", name: "Perú" },
+  { code: "GB", prefix: "+44", name: "Reino Unido" },
+  { code: "FR", prefix: "+33", name: "Francia" },
+  { code: "DE", prefix: "+49", name: "Alemania" },
+  { code: "PT", prefix: "+351", name: "Portugal" },
 ] as const;
 
-type CountryType = typeof COUNTRIES[number];
+type CountryType = (typeof COUNTRIES)[number];
 
 const elderSetupSearchSchema = z.object({
   step: z.coerce.number().min(1).max(5).catch(1),
@@ -52,7 +68,7 @@ function ElderSetupRoute() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
-  
+
   // Estados del formulario
   const [firstName, setFirstName] = useState("");
   const [selectedCountry, setSelectedCountry] = useState<CountryType>(COUNTRIES[0]);
@@ -61,8 +77,18 @@ function ElderSetupRoute() {
   const [confirmOtp, setConfirmOtp] = useState(["", "", "", ""]);
   const [cash, setCash] = useState("");
 
-  const inputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
-  const confirmInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+  const inputRefs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+  ];
+  const confirmInputRefs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+  ];
 
   // Formateador automático del número de móvil: XXX XX XX XX
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +96,8 @@ function ElderSetupRoute() {
     let formatted = raw;
     if (raw.length > 3) formatted = `${raw.slice(0, 3)} ${raw.slice(3)}`;
     if (raw.length > 5) formatted = `${raw.slice(0, 3)} ${raw.slice(3, 5)} ${raw.slice(5)}`;
-    if (raw.length > 7) formatted = `${raw.slice(0, 3)} ${raw.slice(3, 5)} ${raw.slice(5, 7)} ${raw.slice(7)}`;
+    if (raw.length > 7)
+      formatted = `${raw.slice(0, 3)} ${raw.slice(3, 5)} ${raw.slice(5, 7)} ${raw.slice(7)}`;
     setPhone(formatted);
   };
 
@@ -126,11 +153,13 @@ function ElderSetupRoute() {
     if (currentStep === 1) return firstName.trim().length >= 2;
     if (currentStep === 2) return phone.replace(/\s/g, "").length === 9;
     if (currentStep === 3) return otp.join("").length === 4;
-    if (currentStep === 4) return confirmOtp.join("").length === 4 && confirmOtp.join("") === otp.join("");
+    if (currentStep === 4)
+      return confirmOtp.join("").length === 4 && confirmOtp.join("") === otp.join("");
     return true;
   };
 
-  const pinMismatch = currentStep === 4 && confirmOtp.join("").length === 4 && confirmOtp.join("") !== otp.join("");
+  const pinMismatch =
+    currentStep === 4 && confirmOtp.join("").length === 4 && confirmOtp.join("") !== otp.join("");
 
   const handleNextStep = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -154,7 +183,7 @@ function ElderSetupRoute() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      navigate({ to: "/" }); 
+      navigate({ to: "/" });
     }, 2500);
   };
 
@@ -174,7 +203,6 @@ function ElderSetupRoute() {
   return (
     <AestheticLayout maxWidthClassName="max-w-md">
       <div className="w-full bg-white border border-gray-100 shadow-md rounded-2xl relative overflow-hidden p-8 space-y-6">
-        
         {/* Capa de carga procesando el setup */}
         {isLoading && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/95 p-6 text-center">
@@ -196,22 +224,48 @@ function ElderSetupRoute() {
           </div>
           <div className="grid grid-cols-5 gap-1.5 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
             {[1, 2, 3, 4, 5].map((index) => (
-              <div key={index} className={cn("h-full rounded-full transition-all duration-300", index <= currentStep ? "bg-zinc-900" : "bg-gray-100")} />
+              <div
+                key={index}
+                className={cn(
+                  "h-full rounded-full transition-all duration-300",
+                  index <= currentStep ? "bg-zinc-900" : "bg-gray-100",
+                )}
+              />
             ))}
           </div>
         </div>
 
         {/* Formulario */}
-        <form onSubmit={handleNextStep} className="space-y-6 min-h-[180px] flex flex-col justify-between">
+        <form
+          onSubmit={handleNextStep}
+          className="space-y-6 min-h-[180px] flex flex-col justify-between"
+        >
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
-              <motion.div key="step-1" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-4 text-left">
-                <h2 className="text-xl font-bold text-gray-900 tracking-tight">¿Cómo se llama tu familiar?</h2>
+              <motion.div
+                key="step-1"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="space-y-4 text-left"
+              >
+                <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                  ¿Cómo se llama tu familiar?
+                </h2>
                 <div className="space-y-2 pt-2">
                   <Label htmlFor={`${id}-first-name`}>Nombre de pila</Label>
                   <div className="relative">
                     <UserRound className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input id={`${id}-first-name`} placeholder="ej. Carmen" type="text" autoFocus required value={firstName} onChange={(e) => setFirstName(e.target.value)} className="pl-9 h-11" />
+                    <Input
+                      id={`${id}-first-name`}
+                      placeholder="ej. Carmen"
+                      type="text"
+                      autoFocus
+                      required
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="pl-9 h-11"
+                    />
                   </div>
                   <p className="text-xs text-muted-foreground/90 leading-normal">
                     El asistente le saludará así: "Hola, Carmen. ¿En qué te puedo ayudar?"
@@ -221,15 +275,30 @@ function ElderSetupRoute() {
             )}
 
             {currentStep === 2 && (
-              <motion.div key="step-2" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-4 text-left">
-                <h2 className="text-xl font-bold text-gray-900 tracking-tight">¿Cuál es su número de móvil?</h2>
+              <motion.div
+                key="step-2"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="space-y-4 text-left"
+              >
+                <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                  ¿Cuál es su número de móvil?
+                </h2>
                 <div className="space-y-2 pt-2">
                   <Label htmlFor={`${id}-phone`}>Teléfono móvil</Label>
                   <div className="flex gap-2">
                     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
                       <PopoverTrigger asChild>
-                        <Button type="button" variant="outline" className="flex rounded-xl px-3 h-11 border border-gray-200 shrink-0 gap-2 items-center justify-between bg-white text-gray-800 focus-visible:ring-[#34d399]/20 focus-visible:border-[#34d399]">
-                          <FlagComponent country={selectedCountry.code} countryName={selectedCountry.name} />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="flex rounded-xl px-3 h-11 border border-gray-200 shrink-0 gap-2 items-center justify-between bg-white text-gray-800 focus-visible:ring-[#34d399]/20 focus-visible:border-[#34d399]"
+                        >
+                          <FlagComponent
+                            country={selectedCountry.code}
+                            countryName={selectedCountry.name}
+                          />
                           <ChevronsUpDown className="h-3 w-3 opacity-50 shrink-0" />
                         </Button>
                       </PopoverTrigger>
@@ -249,12 +318,26 @@ function ElderSetupRoute() {
                                   }}
                                 >
                                   <div className="flex items-center gap-2 overflow-hidden">
-                                    <FlagComponent country={country.code} countryName={country.name} />
-                                    <span className="text-sm font-medium text-gray-900 truncate">{country.name}</span>
+                                    <FlagComponent
+                                      country={country.code}
+                                      countryName={country.name}
+                                    />
+                                    <span className="text-sm font-medium text-gray-900 truncate">
+                                      {country.name}
+                                    </span>
                                   </div>
                                   <div className="flex items-center gap-2 shrink-0">
-                                    <span className="text-muted-foreground text-xs font-mono">{country.prefix}</span>
-                                    <Check className={cn('h-3.5 w-3.5 text-zinc-900', country.code === selectedCountry.code ? 'opacity-100' : 'opacity-0')} />
+                                    <span className="text-muted-foreground text-xs font-mono">
+                                      {country.prefix}
+                                    </span>
+                                    <Check
+                                      className={cn(
+                                        "h-3.5 w-3.5 text-zinc-900",
+                                        country.code === selectedCountry.code
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
                                   </div>
                                 </CommandItem>
                               ))}
@@ -278,7 +361,10 @@ function ElderSetupRoute() {
                         required
                         value={phone}
                         onChange={handlePhoneChange}
-                        className={cn("h-11 w-full", selectedCountry.prefix.length === 3 ? "pl-18" : "pl-20")}
+                        className={cn(
+                          "h-11 w-full",
+                          selectedCountry.prefix.length === 3 ? "pl-18" : "pl-20",
+                        )}
                       />
                     </div>
                   </div>
@@ -290,8 +376,16 @@ function ElderSetupRoute() {
             )}
 
             {currentStep === 3 && (
-              <motion.div key="step-3" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-4 text-left">
-                <h2 className="text-xl font-bold text-gray-900 tracking-tight">Crea su clave de acceso</h2>
+              <motion.div
+                key="step-3"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="space-y-4 text-left"
+              >
+                <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                  Crea su clave de acceso
+                </h2>
                 <div className="space-y-2 pt-2">
                   <Label>PIN de 4 dígitos</Label>
                   <div className="flex gap-2.5 justify-start">
@@ -319,8 +413,16 @@ function ElderSetupRoute() {
             )}
 
             {currentStep === 4 && (
-              <motion.div key="step-4" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-4 text-left">
-                <h2 className="text-xl font-bold text-gray-900 tracking-tight">Confirma su clave de acceso</h2>
+              <motion.div
+                key="step-4"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="space-y-4 text-left"
+              >
+                <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                  Confirma su clave de acceso
+                </h2>
                 <div className="space-y-2 pt-2">
                   <Label>Repite el PIN de 4 dígitos</Label>
                   <div className="flex gap-2.5 justify-start">
@@ -338,14 +440,20 @@ function ElderSetupRoute() {
                         onKeyDown={(e) => handleConfirmOtpKeyDown(e, idx)}
                         className={cn(
                           "w-12 h-12 text-center text-lg font-bold p-0 focus-visible:ring-[#34d399]/20 focus-visible:border-[#34d399]",
-                          pinMismatch && "border-red-500 bg-red-50/20 focus-visible:ring-red-500/20 focus-visible:border-red-500"
+                          pinMismatch &&
+                            "border-red-500 bg-red-50/20 focus-visible:ring-red-500/20 focus-visible:border-red-500",
                         )}
                       />
                     ))}
                   </div>
                   <AnimatePresence mode="wait">
                     {pinMismatch ? (
-                      <motion.p initial={{ opacity: 0, y: -2 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -2 }} className="text-xs font-semibold text-red-600 flex items-center gap-1.5 pt-1.5">
+                      <motion.p
+                        initial={{ opacity: 0, y: -2 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -2 }}
+                        className="text-xs font-semibold text-red-600 flex items-center gap-1.5 pt-1.5"
+                      >
                         <AlertCircle className="size-3.5" />
                         Los códigos PIN introducidos no coinciden.
                       </motion.p>
@@ -360,13 +468,31 @@ function ElderSetupRoute() {
             )}
 
             {currentStep === 5 && (
-              <motion.div key="step-5" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-4 text-left">
-                <h2 className="text-xl font-bold text-gray-900 tracking-tight">Efectivo inicial estimado</h2>
+              <motion.div
+                key="step-5"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="space-y-4 text-left"
+              >
+                <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+                  Efectivo inicial estimado
+                </h2>
                 <div className="space-y-2 pt-2">
                   <Label htmlFor={`${id}-cash`}>Efectivo a mano (Opcional)</Label>
                   <div className="relative">
                     <Wallet className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input id={`${id}-cash`} placeholder="150 €" type="number" min={0} step="1" autoFocus value={cash} onChange={(e) => setCash(e.target.value)} className="pl-9 h-11" />
+                    <Input
+                      id={`${id}-cash`}
+                      placeholder="150 €"
+                      type="number"
+                      min={0}
+                      step="1"
+                      autoFocus
+                      value={cash}
+                      onChange={(e) => setCash(e.target.value)}
+                      className="pl-9 h-11"
+                    />
                   </div>
                   <p className="text-xs text-muted-foreground/90 leading-normal">
                     Fija el punto de partida para que la gráfica de gastos sea precisa hoy.
@@ -376,13 +502,13 @@ function ElderSetupRoute() {
             )}
           </AnimatePresence>
 
-{/* Panel inferior de navegación con texto actualizado */}
+          {/* Panel inferior de navegación con texto actualizado */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-auto">
             {currentStep > 1 ? (
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={handlePrevStep} 
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handlePrevStep}
                 className="cursor-pointer h-10 px-4 text-xs font-medium text-gray-600 border-gray-200"
               >
                 <ArrowLeft className="mr-2 size-3.5" />
@@ -394,22 +520,24 @@ function ElderSetupRoute() {
 
             <div className="flex items-center gap-6 ml-auto">
               {currentStep === 5 && (
-                <Button 
-                  type="button" 
-                  variant="link" 
-                  onClick={triggerSubmit} 
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={triggerSubmit}
                   className="h-10 px-4 text-xs font-semibold text-gray-500 hover:text-zinc-900 transition-colors"
                 >
                   Omitir
                 </Button>
               )}
-              
+
               <Button
                 type="submit"
                 disabled={!isStepValid()}
                 className={cn(
                   "cursor-pointer h-10 px-5 text-xs font-medium shadow-sm flex items-center gap-1.5 text-white transition-colors",
-                  currentStep === 5 ? "bg-[#00966d] hover:bg-[#007d5a]" : "bg-zinc-900 hover:bg-zinc-800"
+                  currentStep === 5
+                    ? "bg-[#00966d] hover:bg-[#007d5a]"
+                    : "bg-zinc-900 hover:bg-zinc-800",
                 )}
               >
                 {currentStep === 5 ? "Completar" : "Continuar"}
@@ -441,7 +569,13 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
 );
 Input.displayName = "Input";
 
-const FlagComponent = ({ country, countryName }: { country: keyof typeof flags; countryName: string }) => {
+const FlagComponent = ({
+  country,
+  countryName,
+}: {
+  country: keyof typeof flags;
+  countryName: string;
+}) => {
   const Flag = flags[country];
   return (
     <span className="flex h-3.5 w-5 overflow-hidden rounded-xs border border-zinc-200/50 shrink-0 select-none items-center justify-center bg-zinc-100">
@@ -449,4 +583,4 @@ const FlagComponent = ({ country, countryName }: { country: keyof typeof flags; 
     </span>
   );
 };
-FlagComponent.displayName = 'FlagComponent';
+FlagComponent.displayName = "FlagComponent";

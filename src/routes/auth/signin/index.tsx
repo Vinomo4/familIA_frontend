@@ -22,13 +22,15 @@ function AuthSignin() {
       pageSubtitle="¿Cómo deseas acceder hoy?"
       tutorConfig={{
         title: "Portal del Tutor",
-        description: "Entra a tu panel para comprobar el estado de tus familiares, revisar el monedero cruzado y atender alertas de seguridad pendientes.",
+        description:
+          "Entra a tu panel para comprobar el estado de tus familiares, revisar el monedero cruzado y atender alertas de seguridad pendientes.",
         linkText: "Entrar como Tutor",
         linkTo: "/auth/signin/tutor", // Adjust this to your actual login routes
       }}
       elderConfig={{
         title: "Portal del Mayor",
-        description: "Accede directamente a tu asistente de voz para resolver tus dudas cotidianas y comunicarte con tu entorno al instante.",
+        description:
+          "Accede directamente a tu asistente de voz para resolver tus dudas cotidianas y comunicarte con tu entorno al instante.",
         linkText: "Entrar como Mayor",
         linkTo: "/auth/signin/elder", // Adjust this to your actual login routes
       }}

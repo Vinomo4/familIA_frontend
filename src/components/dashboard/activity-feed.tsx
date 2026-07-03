@@ -2,7 +2,12 @@ import { FileText, MessageCircle, ShieldAlert } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { mockActivity, type ActivityEvent, type EventType, type Severity } from "@/lib/dashboard-mocks";
+import {
+  mockActivity,
+  type ActivityEvent,
+  type EventType,
+  type Severity,
+} from "@/lib/dashboard-mocks";
 
 const TYPE_META: Record<EventType, { label: string; icon: typeof FileText; color: string }> = {
   consulta: { label: "Consulta", icon: MessageCircle, color: "text-blue-600 bg-blue-50" },
@@ -18,7 +23,12 @@ const SEVERITY_META: Record<Severity, { label: string; className: string }> = {
 
 function formatDate(iso: string) {
   const d = new Date(iso);
-  return d.toLocaleString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleString("es-ES", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 interface ActivityFeedProps {
@@ -37,12 +47,19 @@ export function ActivityFeed({ limit, events = mockActivity }: ActivityFeedProps
         const Icon = meta.icon;
         return (
           <li key={event.id} className="flex items-start gap-3 py-3">
-            <div className={cn("mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg", meta.color)}>
+            <div
+              className={cn(
+                "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg",
+                meta.color,
+              )}
+            >
               <Icon className="h-4 w-4" />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
-                <p className="truncate text-xs text-muted-foreground">{formatDate(event.timestamp)}</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {formatDate(event.timestamp)}
+                </p>
                 <Badge variant="secondary" className={cn("text-[10px]", sev.className)}>
                   {sev.label}
                 </Badge>

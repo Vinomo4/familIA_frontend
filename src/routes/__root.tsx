@@ -73,17 +73,34 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Lovable App" },
-      { name: "description", content: "FamilIA offers financial inclusion and fraud protection for seniors." },
+      {
+        name: "description",
+        content: "FamilIA offers financial inclusion and fraud protection for seniors.",
+      },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "FamilIA offers financial inclusion and fraud protection for seniors." },
+      {
+        property: "og:description",
+        content: "FamilIA offers financial inclusion and fraud protection for seniors.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "FamilIA offers financial inclusion and fraud protection for seniors." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/77cf719e-5ffe-4925-b8ad-445b7d997381/id-preview-9a0bcce5--0760658a-c916-48d3-a105-906140d71a5e.lovable.app-1780134428665.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/77cf719e-5ffe-4925-b8ad-445b7d997381/id-preview-9a0bcce5--0760658a-c916-48d3-a105-906140d71a5e.lovable.app-1780134428665.png" },
+      {
+        name: "twitter:description",
+        content: "FamilIA offers financial inclusion and fraud protection for seniors.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/77cf719e-5ffe-4925-b8ad-445b7d997381/id-preview-9a0bcce5--0760658a-c916-48d3-a105-906140d71a5e.lovable.app-1780134428665.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/77cf719e-5ffe-4925-b8ad-445b7d997381/id-preview-9a0bcce5--0760658a-c916-48d3-a105-906140d71a5e.lovable.app-1780134428665.png",
+      },
     ],
     links: [
       {

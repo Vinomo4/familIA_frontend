@@ -1,13 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import {
-  BellRing,
-  Heart,
-  MessageCircle,
-  Mic,
-  ScrollText,
-  ShieldCheck,
-  Users,
-} from "lucide-react";
+import { BellRing, Heart, MessageCircle, Mic, ScrollText, ShieldCheck, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import HeroSection from "@/components/ui/hero-section-9";
 import { Card } from "@/components/ui/card";
@@ -157,7 +149,8 @@ function Landing() {
                 FamilIA convierte la banca en algo claro, acompañado y seguro.
               </h2>
               <p className="mt-4 text-sm leading-6 text-gray-600 sm:text-base">
-                Estas funciones están pensadas para que la persona mayor use la app con facilidad y la familia reciba contexto útil sin perder tiempo.
+                Estas funciones están pensadas para que la persona mayor use la app con facilidad y
+                la familia reciba contexto útil sin perder tiempo.
               </p>
             </div>
 
@@ -200,13 +193,15 @@ function Landing() {
 
                           <div className="mt-6 flex items-center gap-2 text-sm font-medium text-gray-900">
                             <span className="inline-flex size-2 rounded-full bg-emerald-500" />
-                            {[
-                              "Protección clara para cada movimiento",
-                              "Voz simple para entender el banco",
-                              "Alertas inmediatas para tu familia",
-                              "Acompañamiento respetuoso y visible",
-                              "Resumen fácil para revisar decisiones",
-                            ][index]}
+                            {
+                              [
+                                "Protección clara para cada movimiento",
+                                "Voz simple para entender el banco",
+                                "Alertas inmediatas para tu familia",
+                                "Acompañamiento respetuoso y visible",
+                                "Resumen fácil para revisar decisiones",
+                              ][index]
+                            }
                           </div>
                         </div>
                       </Card>
@@ -247,7 +242,6 @@ function Landing() {
       >
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-10 sm:gap-16">
-            
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -265,12 +259,14 @@ function Landing() {
                 </span>
               </h2>
               <p className="mt-6 text-base leading-7 text-gray-600 sm:text-lg max-w-2xl">
-                Queremos ayudar a las personas mayores a entrar en esta nueva era digital con confianza y autonomía. FamilIA convierte lo complejo en una experiencia cercana, clara y tranquila.
+                Queremos ayudar a las personas mayores a entrar en esta nueva era digital con
+                confianza y autonomía. FamilIA convierte lo complejo en una experiencia cercana,
+                clara y tranquila.
               </p>
             </motion.div>
 
             <div className="flex flex-col gap-8 sm:gap-12">
-              <motion.h3 
+              <motion.h3
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -296,9 +292,9 @@ function Landing() {
                         alt={member.name}
                         className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:scale-[1.03] group-hover:grayscale-0"
                       />
-                      
+
                       <div className="absolute inset-0 bg-gradient-to-t from-emerald-950/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                      
+
                       <a
                         href={member.linkedin}
                         target="_blank"
@@ -307,7 +303,7 @@ function Landing() {
                         aria-label={`LinkedIn de ${member.name}`}
                       >
                         <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
-                          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                         </svg>
                       </a>
                     </div>
@@ -321,7 +317,6 @@ function Landing() {
                 ))}
               </div>
             </div>
-            
           </div>
         </div>
       </section>

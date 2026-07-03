@@ -67,14 +67,22 @@ export const GooeySpinner = ({ className }: GooeySpinnerProps) => {
         <div className="gooey-dot gooey-dot-3"></div>
       </div>
 
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" className="absolute w-0 h-0 pointer-events-none">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        version="1.1"
+        className="absolute w-0 h-0 pointer-events-none"
+      >
         <defs>
           <filter id="goo-accent">
             <feGaussianBlur result="blur" stdDeviation="8" in="SourceGraphic" />
             {/* Slightly adjusted matrix values to maintain clean, crisp color 
               edges during high-speed color blending.
             */}
-            <feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8" mode="matrix" in="blur" />
+            <feColorMatrix
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8"
+              mode="matrix"
+              in="blur"
+            />
           </filter>
         </defs>
       </svg>

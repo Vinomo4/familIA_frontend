@@ -82,7 +82,9 @@ function DashboardOverview() {
             <div className="mb-3 flex items-center justify-between">
               <div>
                 <h3 className="text-base font-semibold text-gray-900">Actividad reciente</h3>
-                <p className="text-xs text-muted-foreground">Últimas interacciones del asistente.</p>
+                <p className="text-xs text-muted-foreground">
+                  Últimas interacciones del asistente.
+                </p>
               </div>
               <Link
                 to="/dashboard/activity"

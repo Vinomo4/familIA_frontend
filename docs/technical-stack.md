@@ -1,143 +1,157 @@
-# FamilIA Technical Stack and Architecture
+# 🛠️ FamilIA Technical Stack and Architecture
 
-## Overview
+This document provides a comprehensive technical reference for the architecture, dependencies, state management, and custom integrations of the FamilIA application.
 
-FamilIA is a single-page style web application built with TanStack Start on top of Vite. It uses file-based routing, a shared root shell, and a component-driven UI to present a public landing site plus a tutor-facing dashboard experience.
+---
 
-The codebase is intentionally split into three layers:
+## 🏛️ System Architecture
 
-- Routing and application shell in `src/routes`, `src/router.tsx`, and `src/start.ts`
-- Shared UI and feature components in `src/components`
-- Mock data, storage helpers, and utility functions in `src/lib`
-
-## Stack Breakdown
-
-### Runtime and Framework
-
-- React 19 for UI rendering.
-- TanStack Start for the app framework and server entry integration.
-- TanStack Router for file-based routing and route-level metadata.
-- TanStack Query for data context provisioning at the root.
-- Vite as the development server and production bundler.
-- TypeScript for static typing.
-
-### Styling and Presentation
-
-- Tailwind CSS 4 for utility-first styling.
-- `@tailwindcss/vite` for Vite integration.
-- `tailwind-merge` and `clsx` for composing classes safely.
-- `class-variance-authority` for component variants.
-- `tw-animate-css` for animation utilities.
-- Framer Motion for motion on landing and dashboard surfaces.
-
-### UI Component Library
-
-- Radix UI primitives for accessible interactive controls.
-- Lucide React icons for most interface icons.
-- `react-icons` for LinkedIn-style branding icons where needed.
-- Custom components in `src/components/ui` wrap reusable primitives like cards, buttons, inputs, tabs, and navigation shells.
-
-### Forms, Validation, and Inputs
-
-- `react-hook-form` for form handling.
-- `@hookform/resolvers` and Zod for schema-backed validation.
-- `input-otp` for the 4-digit PIN entry UI.
-- `react-phone-number-input` for phone inputs.
-
-### Data Visualization and Interaction
-
-- Recharts for the finance chart.
-- Embla Carousel for carousel-style content patterns.
-- `react-resizable-panels` for resizable layout primitives.
-- `sonner` for toast notifications.
-- `react-day-picker`, `cmdk`, and `vaul` are present for date picking, command palette, and drawer interactions.
-
-### Data and Content Model
-
-- `src/lib/dashboard-mocks.ts` supplies the dashboard sample data.
-- `src/lib/elder-profile.ts` stores and retrieves elder profile data from browser `localStorage`.
-- `src/lib/utils.ts` provides common helpers such as `cn`.
-- `src/lib/error-page.ts` renders fallback error markup on the server.
-
-## Application Architecture
-
-### Request Flow
+FamilIA is structured as a modern, server-side rendered (SSR) web application utilizing **TanStack Start** on top of **Vite**. The client-side layers interact with server hooks, local browser states, and external REST API webhooks.
 
 ```mermaid
-flowchart TD
-  Browser --> Vite
-  Vite --> TanStackStart
-  TanStackStart --> RootShell[src/routes/__root.tsx]
-  RootShell --> Router[src/router.tsx]
-  Router --> Routes[src/routes/*]
-  Routes --> Components[src/components/*]
-  Routes --> Lib[src/lib/*]
+graph TD
+    Browser[Browser / Web Speech API] <--> ClientRouter[TanStack Client Router]
+    ClientRouter <--> ReactComponents[React 19 Components]
+    ClientRouter <--> LocalState[localStorage / Elder Profile]
+    ReactComponents <--> TailwindStyles[Tailwind CSS 4 & Framer Motion]
+    ReactComponents -- "POST FormData (Audio/Image/Text)" --> RemoteWebhook[Remote Agent Webhook]
+    RemoteWebhook -- "JSON Response" --> ReactComponents
+    ReactComponents -- "SpeechSynthesis (Auto-Play)" --> Browser
 ```
 
-### Bootstrapping
+### Key Framework Blocks
 
-1. `src/start.ts` creates the TanStack Start instance.
-2. Server middleware wraps requests and renders a fallback HTML error page on unexpected failures.
-3. `src/router.tsx` creates the router with a `QueryClient` context.
-4. `src/routes/__root.tsx` installs the root HTML shell, global stylesheet, query provider, and nested route outlet.
+1. **Framework Engine:** [TanStack Start](https://tanstack.com/start) wraps React 19, enabling seamless hydration, route loading, and server middleware injection.
+2. **Routing Layer:** [TanStack Router](https://tanstack.com/router) drives type-safe, file-based routes mapped dynamically under `src/routes/*`.
+3. **Caching & Fetching:** [TanStack Query](https://tanstack.com/query) sets up context providers at the root route to manage asynchronous server-state queries.
+4. **Style Layer:** [Tailwind CSS 4](https://tailwindcss.com) utilizing CSS-native variables, paired with [Framer Motion](https://www.framer.com/motion/) for smooth micro-animations.
 
-### Routing Model
+---
 
-The app uses file-based routing. Important route groups:
+## 📂 Codebase File Mapping
 
-- `/` landing page
-- `/pricing` pricing page
-- `/auth/signin` and `/auth/signup` entry points
-- `/dashboard` dashboard shell
-- `/dashboard/activity` activity audit view
-- `/dashboard/finance` finance summary and anomaly view
-- `/dashboard/settings` profile and subscription settings
+```text
+src/
+├── start.ts            # Server entry point and global middleware bootstrap
+├── router.tsx          # Client router bootstrap, linking QueryClient contexts
+├── routes/             # Route configurations
+│   ├── __root.tsx      # Main application HTML shell, query providers, & stylesheets
+│   ├── index.tsx       # Landing page route
+│   ├── pricing.tsx     # Pricing comparisons
+│   ├── auth/           # Entry views for Tutors and Elders
+│   ├── dashboard.tsx   # Base shell layout for the Tutor dashboard
+│   ├── dashboard/      # Sub-views (index.tsx, activity.tsx, finance.tsx, settings.tsx)
+│   └── copilot.tsx     # Senior Copilot page (handling input forms & TTS engine)
+├── components/         # Reusable UI primitives
+│   ├── ui/             # General-purpose layout components (OTP input, voice input, carousels)
+│   └── dashboard/      # Dashboard cards (overview charts, timelines, anomaly alerts)
+└── lib/                # Utilities and storage managers
+    ├── elder-profile.ts # localStorage accessors for custom user settings
+    ├── dashboard-mocks.ts # Mock datasets for finance logs and activity timelines
+    └── utils.ts        # Helper files (class-name joiners)
+```
 
-`src/routes/routeTree.gen.ts` is generated from the route files and should not be edited manually.
+---
 
-### Data Flow
+## 🎙️ Deep Dive: Text-to-Speech (TTS) Integration
 
-The app is mostly local-state driven, but the copilot flow reaches a remote endpoint to obtain assistant responses:
+The **Text-to-Speech (TTS)** engine is embedded into the Copilot route (`src/routes/copilot.tsx`). It provides automated, accessible feedback for seniors by translating written AI responses into speech.
 
-- Landing and pricing pages are static or semi-static.
-- Dashboard pages read from mock arrays and derived values in `src/lib/dashboard-mocks.ts`.
-- Elder profile settings are persisted to browser `localStorage`.
-- The copilot route packages text, audio, and image inputs into `FormData`, posts them to a remote webhook endpoint, and renders the returned assistant response.
-- Route transitions are handled entirely on the client with TanStack Router links and navigation hooks.
+### 🔄 The Speech Lifecycle & State Machine
 
-## Key Decisions
+```mermaid
+stateDiagram-v2
+    [*] --> Idle : App Initialized
+    Idle --> Listening : User clicks Voice Button
+    Listening --> Draft : Input received (Text / Audio / Image)
+    Draft --> Processing : Click "Preguntar al asistente" (Fetch call)
+    Processing --> Responding : JSON response returned
+    Responding --> Speaking : Auto-Trigger speakText()
+    Speaking --> Speaking : Resume / Replay
+    Speaking --> Paused : Click "Pausar lectura"
+    Paused --> Speaking : Click "Reanudar lectura"
+    Speaking --> Stopped : Click "Detener" or Exit Page
+    Stopped --> Idle : Click "Preguntar algo más"
+```
 
-### TanStack Start over a traditional SPA
+---
 
-TanStack Start provides file-based routing, SSR-friendly boundaries, and a coherent server/client split without introducing a larger meta-framework.
+### 💻 Code Implementation Details
 
-### Mock data for dashboard screens
+The voice assistant leverages the native browser [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) via the following implementations:
 
-The dashboard uses deterministic data to keep the UI stable and easy to review. This is separate from the copilot route, which performs a live request to a remote service to get assistant output.
+#### 1. Regex Markdown Sanitization
 
-### Shared root shell and route-level metadata
+Before feeding text to the Speech Synthesis engine, it must be cleaned. Otherwise, the engine reads aloud control characters (e.g., _"asterisk asterisk Importante asterisk asterisk"_).
 
-Route-level `head()` definitions keep titles and descriptions close to the pages that own them, while the root route centralizes the document shell and shared providers.
+```typescript
+// Removes markdown symbols (*, _, #, `, ~, >) and formats hyperlinks to speak the link text
+const cleanText = text.replace(/[*_#`~>]/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+```
 
-### Local storage for elder profile state
+#### 2. Localized Voice Selection
 
-The elder profile settings store name, phone, and PIN values in browser storage. That keeps the settings flow working without backend dependencies while the assistant endpoint handles the conversational responses.
+The TTS script targets Spanish (`es-ES`) and handles asynchronous browser initialization safely (a common quirk in Chromium engines):
 
-## Operational Notes
+```typescript
+const utterance = new SpeechSynthesisUtterance(cleanText);
+utterance.lang = "es-ES";
 
-- Use Bun for dependency installation when possible because the repository has a Bun lockfile.
-- `bun run lint` currently reflects the repository-wide ESLint and Prettier rules.
-- `bun run build` is the best quick check for routing and TypeScript integration.
+const selectVoice = () => {
+  const voices = window.speechSynthesis.getVoices();
+  const esVoice = voices.find((v) => v.lang.startsWith("es"));
+  if (esVoice) {
+    utterance.voice = esVoice;
+  }
+};
 
-## File Map
+selectVoice();
+if (window.speechSynthesis.onvoiceschanged !== undefined) {
+  window.speechSynthesis.onvoiceschanged = selectVoice;
+}
+```
 
-- `src/start.ts` server bootstrap and request middleware
-- `src/router.tsx` router creation
-- `src/routes/__root.tsx` app shell and providers
-- `src/routes/index.tsx` marketing landing page
-- `src/routes/pricing.tsx` pricing entry point
-- `src/routes/auth/*` signup and signin flows
-- `src/routes/dashboard*` tutor dashboard pages
-- `src/components/ui/*` reusable UI primitives
-- `src/components/dashboard/*` dashboard-specific widgets
-- `src/lib/*` mock data, profiles, utilities, and error handling
+#### 3. Automatic Playback Trigger
+
+A React `useEffect` hook monitors the copilot mode. When the assistant transitions to `responding` and the payload response contains text, the speech engine is triggered automatically. When switching away, the speech is immediately cancelled to prevent overlapping audio:
+
+```typescript
+useEffect(() => {
+  if (mode === "responding" && response) {
+    speakText(response);
+  } else {
+    stopSpeech();
+  }
+  return () => {
+    stopSpeech();
+  };
+}, [mode, response, speakText, stopSpeech]);
+```
+
+#### 4. Control Interface State Binding
+
+The UI binds playback state to interactive buttons, allowing users to toggle speech states gracefully:
+
+- **`window.speechSynthesis.speak(utterance)`**: Initiates audio playback.
+- **`window.speechSynthesis.pause()`**: Temporarily pauses.
+- **`window.speechSynthesis.resume()`**: Continues narration from where it stopped.
+- **`window.speechSynthesis.cancel()`**: Fully halts execution and flushes the speech queue.
+
+---
+
+## 🏛️ Architectural Decisions & Trade-offs
+
+### 1. TanStack Start for Hydration & Speed
+
+- **Decision:** Choosing TanStack Start over traditional Client-Only Single Page Applications (SPAs).
+- **Trade-off:** Introduces SSR complexity (such as ensuring code blocks like `window.speechSynthesis` check for `typeof window === "undefined"` to prevent node compiler failures), but yields superior initial page load speeds and SEO indexing potential.
+
+### 2. Browser Local Storage for Simulated State
+
+- **Decision:** Utilizing `localStorage` to manage parameters like the elder's customized name or cash baseline inside [elder-profile.ts](file:///home/vinomo/programming/master/data_science_and_ai/familia-b3b8cda0/src/lib/elder-profile.ts).
+- **Trade-off:** Avoids complex database connections during development, keeping the app self-contained, but state cannot be shared across different browsers or cleared devices.
+
+### 3. Asynchronous Remote API Webhook
+
+- **Decision:** Routing the Copilot payload to an external agent endpoint (`https://209.38.213.186.sslip.io/webhook/...`).
+- **Trade-off:** The frontend parses multimodal uploads (text, voice audio, image attachments) into a `FormData` envelope. The API parses various structured keys (e.g. `user_defense_guidance`, `easy_explanation`, `elderly_guidance_es`) to return context-rich answers tailored for the elder.

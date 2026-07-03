@@ -9,7 +9,14 @@ type Status = "verde" | "amarillo" | "rojo";
 
 const STATUS_CONFIG: Record<
   Status,
-  { label: string; description: string; dot: string; ring: string; icon: typeof CheckCircle2; bg: string }
+  {
+    label: string;
+    description: string;
+    dot: string;
+    ring: string;
+    icon: typeof CheckCircle2;
+    bg: string;
+  }
 > = {
   verde: {
     label: "Todo en orden",
@@ -56,7 +63,11 @@ export function StatusTrafficLight() {
         <div className="flex items-center gap-5">
           <div className="relative flex size-16 shrink-0 items-center justify-center">
             <motion.span
-              className={cn("absolute inline-flex h-full w-full rounded-full", cfg.dot, "opacity-30")}
+              className={cn(
+                "absolute inline-flex h-full w-full rounded-full",
+                cfg.dot,
+                "opacity-30",
+              )}
               animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -67,13 +78,19 @@ export function StatusTrafficLight() {
               <Icon className="h-3.5 w-3.5" />
               Estado en vivo
             </div>
-            <h2 className="mt-1 text-2xl font-semibold tracking-tight text-gray-900">{cfg.label}</h2>
+            <h2 className="mt-1 text-2xl font-semibold tracking-tight text-gray-900">
+              {cfg.label}
+            </h2>
             <p className="mt-1 max-w-md text-sm text-muted-foreground">{cfg.description}</p>
           </div>
         </div>
 
         {status === "rojo" ? (
-          <Button size="lg" variant="destructive" className="h-12 gap-2 rounded-xl px-6 text-base font-semibold">
+          <Button
+            size="lg"
+            variant="destructive"
+            className="h-12 gap-2 rounded-xl px-6 text-base font-semibold"
+          >
             <Phone className="h-5 w-5" />
             Llamar a mi familiar ahora
           </Button>

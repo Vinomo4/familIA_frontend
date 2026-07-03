@@ -54,7 +54,11 @@ function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         <h1 className="text-3xl font-semibold tracking-tight text-gray-900">Configuración</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Mantén el sistema afinado y gestiona tu suscripción.
@@ -95,7 +99,9 @@ function SettingsPage() {
                     <InputOTPSlot index={3} />
                   </InputOTPGroup>
                 </InputOTP>
-                <p className="text-xs text-muted-foreground">Déjalo vacío para mantener el PIN actual.</p>
+                <p className="text-xs text-muted-foreground">
+                  Déjalo vacío para mantener el PIN actual.
+                </p>
               </div>
               <Button type="submit">Guardar cambios</Button>
             </form>
@@ -106,12 +112,18 @@ function SettingsPage() {
           <Card className="rounded-2xl border-border/40 p-6 shadow-sm">
             <h3 className="text-base font-semibold text-gray-900">Calibración de efectivo</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Si el mayor ha perdido la cuenta, corrige aquí el efectivo a mano para resetear la línea base.
+              Si el mayor ha perdido la cuenta, corrige aquí el efectivo a mano para resetear la
+              línea base.
             </p>
             <div className="mt-6 flex max-w-sm items-end gap-3">
               <div className="flex-1 space-y-2">
                 <Label htmlFor="cash">Efectivo a mano (€)</Label>
-                <Input id="cash" type="number" value={cash} onChange={(e) => setCash(e.target.value)} />
+                <Input
+                  id="cash"
+                  type="number"
+                  value={cash}
+                  onChange={(e) => setCash(e.target.value)}
+                />
               </div>
               <Button onClick={handleResetBaseline} variant="outline" className="gap-2">
                 <RotateCcw className="h-4 w-4" />
@@ -126,7 +138,10 @@ function SettingsPage() {
             <Card className="rounded-2xl border-border/40 p-6 shadow-sm lg:col-span-2">
               <div className="flex items-start justify-between">
                 <div>
-                  <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/10">
+                  <Badge
+                    variant="secondary"
+                    className="bg-primary/10 text-primary hover:bg-primary/10"
+                  >
                     Plan actual
                   </Badge>
                   <h3 className="mt-2 text-xl font-semibold text-gray-900">Pro Mensual</h3>
@@ -134,7 +149,9 @@ function SettingsPage() {
                     Protección activa 24/7, monitorización financiera y soporte prioritario.
                   </p>
                 </div>
-                <p className="text-2xl font-semibold text-gray-900">9,99 €<span className="text-sm text-muted-foreground">/mes</span></p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  9,99 €<span className="text-sm text-muted-foreground">/mes</span>
+                </p>
               </div>
               <div className="mt-5 flex flex-wrap gap-2">
                 <Button onClick={() => navigate({ to: "/pricing" })}>Cambiar plan</Button>
@@ -166,10 +183,15 @@ function SettingsPage() {
                 <li key={inv.id} className="flex items-center justify-between py-3">
                   <div>
                     <p className="text-sm font-medium text-gray-900">{inv.id}</p>
-                    <p className="text-xs text-muted-foreground">{inv.date} · {inv.plan}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {inv.date} · {inv.plan}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                    <Badge
+                      variant="secondary"
+                      className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
+                    >
                       {inv.status}
                     </Badge>
                     <span className="text-sm font-medium text-gray-900">{inv.amount}</span>

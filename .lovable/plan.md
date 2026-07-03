@@ -28,25 +28,29 @@ src/routes/
 ### 3. Page contents
 
 **Overview (`dashboard.index.tsx`)**
+
 - Header: "Hola, [tutor]" + current date.
 - `StatusTrafficLight` (full width, prioritized).
 - Grid of 3 `MetricCard`: Dudas resueltas (mes), Amenazas bloqueadas, Efectivo estimado a mano.
 - Two-column section: `ActivityFeed limit={4}` (link "Ver todo" → /dashboard/activity) and finance preview card with `Sparkline` (link "Ver monedero" → /dashboard/finance).
 
 **Activity (`dashboard.activity.tsx`)**
+
 - Filter bar: `Select` for tipo de evento (Consultas / Emergencias / Documentos / Todos), `Select` for gravedad, date range using existing `Calendar` in a `Popover`.
 - Full `ActivityFeed` rendered as `Table` (Fecha, Tipo, Descripción anonimizada, Gravedad badge). Mocked dataset of ~20 entries.
 
 **Finance (`dashboard.finance.tsx`)**
+
 - Main chart card: line chart (Recharts via `@/components/ui/chart`) with two series — Saldo digital (banco simulado) y Efectivo estimado (reportes de voz). 30 días de datos mock.
 - Resumen lateral: saldo actual, variación 7d, próximos cargos recurrentes.
 - Panel de Anomalías: stacked `Alert` cards (cargos duplicados, comisiones inusuales) con severidad y CTA "Revisar".
 
 **Settings (`dashboard.settings.tsx`)**
+
 - Tabs (`@/components/ui/tabs`):
-  - *Mayor*: Input nombre (prellenado desde `localStorage`), `InputOTP` para nuevo PIN de 4 dígitos, botón Guardar (actualiza `storeElderProfile`).
-  - *Calibración*: Input numérico "Efectivo a mano" + botón "Resetear línea base" (toast confirm).
-  - *Suscripción*: card del plan actual (mock "Pro Mensual"), botón "Cambiar plan" → `/pricing`, lista de facturas mock con botón descarga (dummy), método de pago enmascarado.
+  - _Mayor_: Input nombre (prellenado desde `localStorage`), `InputOTP` para nuevo PIN de 4 dígitos, botón Guardar (actualiza `storeElderProfile`).
+  - _Calibración_: Input numérico "Efectivo a mano" + botón "Resetear línea base" (toast confirm).
+  - _Suscripción_: card del plan actual (mock "Pro Mensual"), botón "Cambiar plan" → `/pricing`, lista de facturas mock con botón descarga (dummy), método de pago enmascarado.
 
 ### 4. Styling & motion
 
