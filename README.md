@@ -15,13 +15,13 @@ Modern banking interfaces are often overwhelming, filled with complex jargon, an
 
 ## ✨ Key Product Features
 
-| Feature                       | For Whom | Description                                                                                                                                                                          |
-| :---------------------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **🎙️ Multimodal Copilot**     | Seniors  | A friendly, accessible chat interface. Seniors can talk, upload images of bills/receipts, or type.                                                                                   |
-| **🔊 Text-to-Speech (TTS)**   | Seniors  | **[New]** Auto-reads assistant responses out loud using a natural, localized voice. Supports play, pause, resume, and stop controls to enhance readability and combat visual strain. |
-| **🛡️ Fraud & Anomaly Alerts** | Tutors   | Real-time analysis flags unusual withdrawals, erratic charges, or potential scams immediately.                                                                                       |
-| **📊 Financial Overview**     | Tutors   | Unified visual dashboard comparing digital cash estimates, bank balances, and upcoming recurring bills.                                                                              |
-| **📝 Clear Explanations**     | Both     | Translates dense technical bank details, policies, or receipts into friendly, plain-language summaries.                                                                              |
+| Feature                       | For Whom | Description                                                                                                                                                                |
+| :---------------------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **🎙️ Multimodal Copilot**     | Seniors  | A friendly, accessible chat interface. Seniors can talk, upload images of bills/receipts, or type.                                                                         |
+| **🔊 Text-to-Speech (TTS)**   | Seniors  | Auto-reads assistant responses out loud using a natural, localized voice. Supports play, pause, resume, and stop controls to enhance readability and combat visual strain. |
+| **🛡️ Fraud & Anomaly Alerts** | Tutors   | Real-time analysis flags unusual withdrawals, erratic charges, or potential scams immediately.                                                                             |
+| **📊 Financial Overview**     | Tutors   | Unified visual dashboard comparing digital cash estimates, bank balances, and upcoming recurring bills.                                                                    |
+| **📝 Clear Explanations**     | Both     | Translates dense technical bank details, policies, or receipts into friendly, plain-language summaries.                                                                    |
 
 ---
 

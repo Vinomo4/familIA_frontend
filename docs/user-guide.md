@@ -1,104 +1,154 @@
-# 📘 FamilIA User Guide
+# 📘 FamilIA Comprehensive User Guide
 
-Welcome to the **FamilIA User Guide**. This document walks you through the core flows, typical user journeys, page outlines, and specialized features of the application, emphasizing the **multimodal Copilot assistant** and its newly integrated **Text-to-Speech (TTS)** voice system.
+FamilIA is a dedicated, accessibility-focused web application designed to empower older adults to manage their personal finances with confidence while keeping their families (or tutors) informed through a secure, non-intrusive safety net.
+
+This guide provides an exhaustive review of the application's features, typical user journeys, page-by-page guidelines, accessibility design standards, and testing scenarios designed to walk graders and project evaluators through the platform.
 
 ---
 
-## 🧭 Typical User Journey
+## 🎨 1. Design & Product Philosophy
 
-FamilIA separates the experience into two primary personas: the **Older Adult (Senior)** who seeks financial autonomy, and the **Tutor (Family Member)** who provides a supportive safety net.
+Older adults frequently experience barriers when interacting with modern digital banking platforms:
+
+- **Visual Obstacles:** Small text, low contrast, and busy page layouts.
+- **Cognitive Load:** Confusing terms like "remittance," "ACH pending," and "pre-authorized draft."
+- **Security Anxieties:** Increased vulnerability to sophisticated phishing, social engineering, and financial scams.
+
+FamilIA addresses these problems directly:
+
+- **For Tutors (Family Members):** It acts as an observer's lens. Instead of taking absolute control or lockouts over the senior's funds, the tutor can review aggregate logs, verify recent interactions, adjust alerts, and monitor balances from a clean desktop workspace.
+- **For Elders (Seniors):** It provides a welcoming, low-clutter environment dominated by an agentic **Copilot** companion that accepts speech (voice input), images, or simple text, and auto-narrates instructions back using **Text-to-Speech (TTS)**.
+
+---
+
+## 🧭 2. User Roles & Onboarding Flows
+
+FamilIA establishes two distinct user personas, ensuring specialized routes, visual themes, and features for each.
 
 ```mermaid
-flowchart LR
-    A[Start on Home Page] --> B{Choose Account Role}
-    B -->|Tutor Profile| C[Access Tutor Dashboard]
-    B -->|Elder Profile| D[Access Copilot Interface]
-    C --> E[Monitor Finances, Activity, Alerts & Settings]
-    D --> F[Send Text / Audio / Image Inputs]
-    F --> G[Get AI Response + Auto-TTS Narration]
+flowchart TD
+    Start[Home Page / Index Route] --> SelectAuth{Sign In / Sign Up Selector}
+    SelectAuth -->|Choose Tutor| AuthTutor[Tutor Login / Sign Up]
+    SelectAuth -->|Choose Elder| AuthElder[Elder Login / Sign Up]
+    AuthTutor --> Dash[Tutor Dashboard Shell]
+    AuthElder --> Copilot[Elder Copilot UI]
+
+    subgraph Tutor Views
+    Dash --> Overview[Overview Widget]
+    Dash --> Activity[Detailed Activity Log]
+    Dash --> Finance[Balance Charts & Anomalies]
+    Dash --> Settings[Elder Profile & Thresholds]
+    end
+
+    subgraph Elder Views
+    Copilot --> Speak[Voice Recording Input]
+    Copilot --> Upload[Invoice / Bill Photo Upload]
+    Copilot --> Response[Text Answer Display]
+    Copilot --> TTS[Auto Speech Synthesis]
+    end
 ```
 
-### 1. The Welcome & Discovery
+### 👤 The Tutor Account
 
-Users land on the marketing home page, which breaks down the value proposition in simple, jargon-free terminology:
+- **Primary Target:** Sons, daughters, caregivers, or guardians.
+- **Layout Design:** Modern, feature-rich desktop-oriented dashboard featuring cards, charts, and table lists.
+- **Key Tasks:** Verify unusual charge levels, monitor bank vs. cash ratios, check log histories, and change elder configurations.
 
-- **Anti-Fraud Guardrails:** Spotting suspicious banking movements.
-- **Friendly Explanations:** Simplifying complex transaction sheets.
-- **Family Alerts:** Informing children or tutors when anomalies arise.
-- **Empowered Independence:** Enabling the older adult to act autonomously rather than taking their keys away.
+### 🧓 The Elder/Senior Account
 
-### 2. Setting Up Roles (Signup / Signin)
-
-On the onboarding screens, users choose their entry path:
-
-- **Family Tutor:** Manages settings, reviews transaction alerts, adjusts cash tracking metrics, and views history records.
-- **Elder Mode:** Designed to be highly accessible and distraction-free. The senior is routed directly to the **Copilot** workspace.
-
-### 3. The Tutor Dashboard
-
-A centralized dashboard for family members to observe without micro-managing. It contains:
-
-- **Overview:** Summary of wallet balances, recent occurrences, and quick security status checks.
-- **Activity History:** A chronologically audited timeline of interactions, consultations, and document uploads.
-- **Finance Section:** Comprehensive visualization charts comparing bank funds vs. cash estimates, alongside a list of upcoming bills and detected anomalies.
-- **Settings:** Lets the tutor adjust passcodes, update the elder's name, set cash baseline thresholds, and manage subscription billing packages.
+- **Primary Target:** Older adults seeking straightforward financial advice or fraud checking.
+- **Layout Design:** Mobile-first, high-contrast, large-button layout. Features giant icons, personalized greetings, and minimal text entry dependencies.
+- **Key Tasks:** Ask conversational questions, upload physical receipts or letters, and listen to vocalized directions.
 
 ---
 
-## 🎙️ The Elder Copilot & Voice Synthesis (TTS)
+## 📊 3. The Tutor Dashboard In-Depth
 
-The **Copilot Page** is the heart of the older adult's user experience. It provides a warm, conversational workspace where they can input information dynamically and receive clear guidance.
+The Tutor Dashboard is divided into a base shell layout (`src/routes/dashboard.tsx`) with four functional sub-pages:
 
-> [!IMPORTANT]
-> **What is the Copilot?**
-> The Copilot allows the older adult to type text queries, hold a button to talk (Voice Input), or upload a photo of a document/bill/receipt. The application packages these inputs and securely requests guidance from a remote endpoint.
+### 🏠 A. Overview Page (`/dashboard/index.tsx`)
 
----
+The central dashboard feed, aggregating indicators for immediate review:
 
-### 🔊 Text-to-Speech (TTS) Accessibility
+1. **Safety Status Indicator:** Displays a green card labeled `"Todo correcto"` if no critical security anomalies are active, or a prominent warning if a risk is detected.
+2. **Elder Wallet Card:** Shows digital balance estimates alongside cash estimates.
+3. **Recent Activity Feed:** Summarizes the last 3 logged events (e.g., invoice uploads, voice inquiries) with timestamp values.
 
-To ensure high readability and accommodate seniors who may have vision impairments, cataracts, or simply get tired reading screens, FamilIA includes a robust **Text-to-Speech (TTS)** system.
+### 📜 B. Activity Audit Log (`/dashboard/activity.tsx`)
 
-#### How TTS Works
+A chronological record of every interaction the elder has made with the Copilot:
 
-1. **Instant Auto-Play:** When a response is received from the remote assistant, **FamilIA begins reading it aloud automatically** in a clear, localized Spanish voice. The user does not need to click any buttons to start the narration.
-2. **Markdown Filtering:** The system automatically sanitizes response text, stripping out markdown notation (such as `*`, `#`, or URL links) so that the synthetic voice does not read symbols aloud.
-3. **Interactive Speech Controls:** A set of elegant voice control buttons appear immediately above the response block:
+- **Event Classifications:**
+  - `INFO`: Standard balance queries or casual questions.
+  - `WARNING`: Document uploads, PIN settings modifications.
+  - `CRITICAL`: Potential scam detections, suspicious external messages, or invoice warning triggers.
+- **Filter System:** Tutors can filter logs by severity level (`Todos`, `Crítico`, `Advertencia`, `Info`) or search using search keywords. This makes auditing past questions easy.
 
-| Control Button        | Icon      | Action                                                        |
-| :-------------------- | :-------- | :------------------------------------------------------------ |
-| **Escuchar de nuevo** | `Volume2` | Plays the complete voice narration from the beginning.        |
-| **Pausar lectura**    | `Pause`   | Temporarily stops the voice playback at the current sentence. |
-| **Reanudar lectura**  | `Volume2` | Resumes reading from where the speech was paused.             |
-| **Detener**           | `Square`  | Abruptly cancels current narration and hides the Stop button. |
+### 📈 C. Finance Monitoring (`/dashboard/finance.tsx`)
 
----
+A page highlighting banking movement indicators and charts:
 
-## 🛠️ Main Feature Explanations
+1. **Balance Comparison Chart:** An interactive dual-line/bar graph tracking bank account numbers alongside cash holdings over recent months.
+2. **Upcoming Charges Log:** Displays predictable recurring charges (e.g., utility bills, streaming services, medicine subscriptions) to help tutors spot duplicate or forgotten accounts.
+3. **Detected Anomalies Grid:** Highlights specific weird transactions, such as double charges or unknown company cash drafts, categorizing their risk factor.
 
-### 🛡️ Fraud Protection & Anomalies
+### ⚙️ D. Settings Panel (`/dashboard/settings.tsx`)
 
-Tutors receive warning flags when bank statements show double charges, unusual transfers, or off-hour ATM withdrawals. This lets families coordinate directly before small errors turn into bank disputes.
+Controls the client environment properties stored inside the browser:
 
-### 📝 Plain-Language Translation
-
-Dense documents and bills are summarized into simplified highlights. Tutors and seniors can upload standard invoices to see a simple explanation of the total cost and what the bill is for.
-
-### 🔒 Elder Profile Settings
-
-Configuration values, such as the elder's custom name (which changes the personalized greetings on the Copilot page) and emergency contact pins, are saved inside browser `localStorage`.
-
-> [!WARNING]
-> Since mock data settings are stored in your browser's local state, clearing cookies or cache will restore default values (e.g., reverting the elder's name to _Carmen_).
+- **Elder Name Parameter:** Editing this value immediately changes the dynamic greeting texts on the senior's Copilot page.
+- **Emergency PIN Entry:** Sets a 4-digit numeric code to protect sensitive configurations.
+- **Alert Baseline Sliders:** Customizes budget parameters (e.g., cash baseline estimates, notification thresholds).
+- **Billing System:** Provides options to select or upgrade FamilIA service packages (`Básico`, `Premium`, `Familiar`).
 
 ---
 
-## 🚀 Recommended First Actions for Testing
+## 🎙️ 4. The Copilot Experience & Text-to-Speech (TTS)
 
-To evaluate and experience the platform:
+The Copilot workspace (`src/routes/copilot.tsx`) is designed for maximum ease of use:
 
-1. **Visit the Landing Page:** Review the features and navigate to `/auth/signin`.
-2. **Configure Settings:** Go to `/dashboard/settings` and change the Elder's Name (e.g., to _"Sofía"_ or _"Manuel"_).
-3. **Navigate to Copilot:** Open the Copilot screen (`/copilot`). Observe the personalized greeting dynamically updating with the new name.
-4. **Initiate Copilot Query:** Type a question or upload a mock image, then press **"Preguntar al asistente"**.
-5. **Experience TTS:** Listen as the assistant's voice response automatically begins speaking in Spanish. Test the **Pause**, **Resume**, and **Stop** controls to observe state changes.
+### 🎛️ Multimodal Inputs
+
+Seniors can send context using the three large primary buttons at the bottom of the screen:
+
+1. **🎙️ Voice Button (Record):**
+   - Designed for users who find mobile keyboards frustrating or painful.
+   - Prompts the browser's recording access. Displays a pulsating red recording circle to give clear visual feedback that the microphone is active.
+   - Saves the voice query as an audio file blob.
+2. **📷 Camera / Photo Button (Upload):**
+   - Lets seniors snap or upload images of invoices, official bank letters, or suspicious messages.
+   - Displays an progress overlay while uploading.
+   - Generates a preview thumbnail so they can verify the image before submission.
+3. **⌨️ Text Input Field:**
+   - A simplified input box at the bottom center of the page.
+   - Features a clean `"Escribe aquí..."` placeholder and a large send button.
+
+---
+
+### 🔊 Text-to-Speech (TTS) Voice Guidance
+
+The Text-to-Speech system reads the AI-generated responses out loud to help seniors digest information easily.
+
+```
++-----------------------------------------------------------+
+|               [ Volume Control Bar ]                      |
+|                                                           |
+|  [Volume2] Escuchar / Reanudar     [Square] Detener/Stop  |
++-----------------------------------------------------------+
+|                                                           |
+| "Hola Carmen. He analizado la factura de luz que enviaste.|
+| No te preocupes, el importe es correcto y se cargará..." |
++-----------------------------------------------------------+
+```
+
+#### Key Functional Rules:
+
+- **Instant Auto-Playback:** As soon as the application processes the API response, it triggers the voice synthesis. **The senior does not have to search for or click a start button.**
+- **Markdown Stripper:** AI responses contain markdown formatting (such as `**`, `#`, list bullets `-`, or brackets `[]`). Before the speech utterance starts, a regex filter scrubs these formatting symbols. This ensures the voice reads cleanly rather than pronouncing punctuation codes.
+- **Voice Customization:** The code targets Spanish (`es-ES`) using the browser's native speech databases.
+- **Interactive Player Actions:**
+  - **Replay / Resume (`Volume2`):** Starts the reading from the first word, or resumes playback if it was paused.
+  - **Pause (`Pause`):** Pauses narration mid-sentence.
+  - **Stop (`Square`):** Instantly cancels the speech queue, silencing the browser.
+
+---

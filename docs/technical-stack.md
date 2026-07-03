@@ -1,157 +1,240 @@
-# 🛠️ FamilIA Technical Stack and Architecture
+# 🛠️ FamilIA Deep Technical Stack and Architecture
 
-This document provides a comprehensive technical reference for the architecture, dependencies, state management, and custom integrations of the FamilIA application.
+This document provides a detailed technical reference of the architecture, modules, algorithms, state configurations, and dependency trees that compose the FamilIA web application.
 
 ---
 
-## 🏛️ System Architecture
+## 🏛️ 1. Technical Framework & Core Stack
 
-FamilIA is structured as a modern, server-side rendered (SSR) web application utilizing **TanStack Start** on top of **Vite**. The client-side layers interact with server hooks, local browser states, and external REST API webhooks.
+FamilIA is a server-side rendered (SSR) web application utilizing **React 19** and **TypeScript**, packaged and served via the **TanStack Start** meta-framework.
 
-```mermaid
-graph TD
-    Browser[Browser / Web Speech API] <--> ClientRouter[TanStack Client Router]
-    ClientRouter <--> ReactComponents[React 19 Components]
-    ClientRouter <--> LocalState[localStorage / Elder Profile]
-    ReactComponents <--> TailwindStyles[Tailwind CSS 4 & Framer Motion]
-    ReactComponents -- "POST FormData (Audio/Image/Text)" --> RemoteWebhook[Remote Agent Webhook]
-    RemoteWebhook -- "JSON Response" --> ReactComponents
-    ReactComponents -- "SpeechSynthesis (Auto-Play)" --> Browser
+```
++-------------------------------------------------------------+
+|                     Client Browser Layer                    |
+|  - React 19 UI Components (Tailwind CSS 4, Framer Motion)   |
+|  - Web Speech API (SpeechSynthesisUtterance)                |
+|  - Local Storage State Managers                             |
++-------------------------------------------------------------+
+                              |
+                     SSR Hydration Request
+                              v
++-------------------------------------------------------------+
+|                 TanStack Start Server Engine                |
+|  - Server-Bootstrap Middleware (src/start.ts)               |
+|  - File-Based Routing Compiler (src/routes/*)               |
+|  - SSR Hydration Boundaries & HTML Injectors                |
++-------------------------------------------------------------+
+                              |
+                      REST Webhook Calls
+                              v
++-------------------------------------------------------------+
+|               Remote Multimodal LLM Endpoint                |
+|  - Processes JSON & Form-Data payloads                      |
+|  - Returns classified agent evaluations & guides            |
++-------------------------------------------------------------+
 ```
 
-### Key Framework Blocks
+### Framework Module Breakdown
 
-1. **Framework Engine:** [TanStack Start](https://tanstack.com/start) wraps React 19, enabling seamless hydration, route loading, and server middleware injection.
-2. **Routing Layer:** [TanStack Router](https://tanstack.com/router) drives type-safe, file-based routes mapped dynamically under `src/routes/*`.
-3. **Caching & Fetching:** [TanStack Query](https://tanstack.com/query) sets up context providers at the root route to manage asynchronous server-state queries.
-4. **Style Layer:** [Tailwind CSS 4](https://tailwindcss.com) utilizing CSS-native variables, paired with [Framer Motion](https://www.framer.com/motion/) for smooth micro-animations.
+| Dependency            | Purpose in Stack                    | Rationale for Selection                                                                                                  |
+| :-------------------- | :---------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| **React 19**          | Core UI rendering engine.           | Introduces compiler enhancements, automatic ref management, and optimized resource loading triggers.                     |
+| **TanStack Start**    | Full-stack meta-framework.          | Delivers file-based routing, client-server boundary control (via Server Functions), and integrated hydration middleware. |
+| **TanStack Router**   | Client routing manager.             | Guarantees type-safe route trees, native search parameter parsing, layout route structures, and fast page transitions.   |
+| **TanStack Query v5** | Caching and remote query state.     | Eliminates manual `useEffect` fetching blocks. Manages network state, cache validation, and refetching indicators.       |
+| **Vite**              | Bundler and dev server.             | Provides extremely fast Hot Module Replacement (HMR) and optimized build assets.                                         |
+| **Tailwind CSS 4**    | Styling stylesheet processor.       | Native CSS variable bindings, high compilation speeds, container query support, and clean inline classes.                |
+| **Framer Motion**     | Visual page and card transitions.   | Handles layout layout animations, orchestrates stagger fades, and binds transitions on the Copilot page.                 |
+| **Recharts**          | Interactive SVG financial graphics. | Responsive chart layouts optimized for React component mounts.                                                           |
 
 ---
 
-## 📂 Codebase File Mapping
+## 📂 2. Directory Map & File Roles
 
 ```text
 src/
-├── start.ts            # Server entry point and global middleware bootstrap
-├── router.tsx          # Client router bootstrap, linking QueryClient contexts
-├── routes/             # Route configurations
-│   ├── __root.tsx      # Main application HTML shell, query providers, & stylesheets
-│   ├── index.tsx       # Landing page route
-│   ├── pricing.tsx     # Pricing comparisons
-│   ├── auth/           # Entry views for Tutors and Elders
-│   ├── dashboard.tsx   # Base shell layout for the Tutor dashboard
-│   ├── dashboard/      # Sub-views (index.tsx, activity.tsx, finance.tsx, settings.tsx)
-│   └── copilot.tsx     # Senior Copilot page (handling input forms & TTS engine)
-├── components/         # Reusable UI primitives
-│   ├── ui/             # General-purpose layout components (OTP input, voice input, carousels)
-│   └── dashboard/      # Dashboard cards (overview charts, timelines, anomaly alerts)
-└── lib/                # Utilities and storage managers
-    ├── elder-profile.ts # localStorage accessors for custom user settings
-    ├── dashboard-mocks.ts # Mock datasets for finance logs and activity timelines
-    └── utils.ts        # Helper files (class-name joiners)
+├── start.ts                # Server entry point; configures hydration and initial response envelopes.
+├── router.tsx              # Hydrates the client-side app shell; registers QueryClient context instances.
+├── routes/                 # File-based routes compiled by TanStack Start
+│   ├── __root.tsx          # Defines root HTML wrapper, viewport tags, global CSS files, and TanStack Router outlet.
+│   ├── index.tsx           # Home landing page featuring Framer Motion hero elements.
+│   ├── pricing.tsx         # Plan cards comparing Basic, Premium, and Family circles.
+│   ├── auth/               # Entry panels directing users into Tutor or Elder layouts.
+│   ├── dashboard.tsx       # Desktop navigation shell for tutors; secures dashboard subroutes.
+│   └── copilot.tsx         # The Elder chat workspace; handles input forms, API requests, and voice synthesis.
+├── components/             # Visual modules
+│   ├── ui/                 # Atomic design inputs (OTP code boxes, card wrappers, buttons, file upload cards)
+│   └── dashboard/          # Specialized aggregate cards (finance graphs, activity items, settings forms)
+└── lib/                    # Storage and utilities
+    ├── elder-profile.ts     # Interface for accessing and parsing local storage profiles.
+    ├── dashboard-mocks.ts   # Local mockup datasets representing statements, alert severities, and user logins.
+    └── utils.ts            # Common helper files (e.g., class merge primitives like clsx).
 ```
 
 ---
 
-## 🎙️ Deep Dive: Text-to-Speech (TTS) Integration
+## 🎙️ 3. Text-to-Speech (TTS) Engine Architecture
 
-The **Text-to-Speech (TTS)** engine is embedded into the Copilot route (`src/routes/copilot.tsx`). It provides automated, accessible feedback for seniors by translating written AI responses into speech.
+The voice synthesis engine is integrated directly into the Copilot route (`src/routes/copilot.tsx`). It uses the browser's native `SpeechSynthesis` framework.
 
-### 🔄 The Speech Lifecycle & State Machine
+### 🔄 Speech Synthesis State Flow
+
+The TTS engine operates within a strict state machine bound directly to the visual feedback controls in the UI:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Idle : App Initialized
-    Idle --> Listening : User clicks Voice Button
-    Listening --> Draft : Input received (Text / Audio / Image)
-    Draft --> Processing : Click "Preguntar al asistente" (Fetch call)
-    Processing --> Responding : JSON response returned
-    Responding --> Speaking : Auto-Trigger speakText()
-    Speaking --> Speaking : Resume / Replay
-    Speaking --> Paused : Click "Pausar lectura"
-    Paused --> Speaking : Click "Reanudar lectura"
-    Speaking --> Stopped : Click "Detener" or Exit Page
-    Stopped --> Idle : Click "Preguntar algo más"
+    [*] --> Unmounted : User enters app
+    Unmounted --> Mounted : Route Loaded
+    Mounted --> AutoPlaying : Webhook returns JSON payload & speaks response
+    AutoPlaying --> Speaking : Voice stream begins
+    Speaking --> Paused : User clicks "Pausar lectura" (calls pause())
+    Paused --> Speaking : User clicks "Reanudar lectura" (calls resume())
+    Speaking --> Stopped : User clicks "Detener" (calls cancel())
+    Speaking --> Unmounted : User navigates away (cleanup useEffect calls cancel())
+    Stopped --> Mounted : Ready for new inputs
 ```
 
----
+### 📝 Core Code Implementation Walkthrough
 
-### 💻 Code Implementation Details
+#### A. Sanitization Parser
 
-The voice assistant leverages the native browser [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) via the following implementations:
-
-#### 1. Regex Markdown Sanitization
-
-Before feeding text to the Speech Synthesis engine, it must be cleaned. Otherwise, the engine reads aloud control characters (e.g., _"asterisk asterisk Importante asterisk asterisk"_).
+To prevent the synthetic voice engine from speaking format codes like _"hashtag"_ or _"asterisk"_, a regex parsing step filters markdown tags:
 
 ```typescript
-// Removes markdown symbols (*, _, #, `, ~, >) and formats hyperlinks to speak the link text
-const cleanText = text.replace(/[*_#`~>]/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
-```
+const speakText = useCallback((text: string) => {
+  if (typeof window === "undefined" || !window.speechSynthesis) return;
 
-#### 2. Localized Voice Selection
+  // Flush any remaining active speech cues in the browser queue
+  window.speechSynthesis.cancel();
 
-The TTS script targets Spanish (`es-ES`) and handles asynchronous browser initialization safely (a common quirk in Chromium engines):
+  // Strip Markdown markers (*, _, #, `, ~, >)
+  // Format markdown link notations [Text](URL) -> to read only "Text"
+  const cleanText = text.replace(/[*_#`~>]/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
 
-```typescript
-const utterance = new SpeechSynthesisUtterance(cleanText);
-utterance.lang = "es-ES";
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.lang = "es-ES";
 
-const selectVoice = () => {
-  const voices = window.speechSynthesis.getVoices();
-  const esVoice = voices.find((v) => v.lang.startsWith("es"));
-  if (esVoice) {
-    utterance.voice = esVoice;
+  // Identify and assign Spanish voice localization
+  const selectVoice = () => {
+    const voices = window.speechSynthesis.getVoices();
+    const esVoice = voices.find((v) => v.lang.startsWith("es"));
+    if (esVoice) {
+      utterance.voice = esVoice;
+    }
+  };
+
+  selectVoice();
+  // Chromium engines load voice tables asynchronously; handle the callback:
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = selectVoice;
   }
-};
 
-selectVoice();
-if (window.speechSynthesis.onvoiceschanged !== undefined) {
-  window.speechSynthesis.onvoiceschanged = selectVoice;
-}
+  // Update UI play state bindings
+  utterance.onstart = () => {
+    setIsSpeaking(true);
+    setIsPaused(false);
+  };
+  utterance.onend = () => {
+    setIsSpeaking(false);
+    setIsPaused(false);
+  };
+  utterance.onerror = (e) => {
+    console.warn("Speech synthesis error event:", e);
+    setIsSpeaking(false);
+    setIsPaused(false);
+  };
+
+  window.speechSynthesis.speak(utterance);
+}, []);
 ```
 
-#### 3. Automatic Playback Trigger
+#### B. Memory Safety & Lifecycle Cleanups
 
-A React `useEffect` hook monitors the copilot mode. When the assistant transitions to `responding` and the payload response contains text, the speech engine is triggered automatically. When switching away, the speech is immediately cancelled to prevent overlapping audio:
+If a user exits the Copilot route while the voice engine is actively speaking, the audio stream will continue to play in the background unless handled. We prevent this memory leak and overlapping audio issue by implementing a lifecycle cleanup inside a React `useEffect` hook:
 
 ```typescript
 useEffect(() => {
+  // Trigger auto-playback when response payload arrives
   if (mode === "responding" && response) {
     speakText(response);
   } else {
+    // Silence speaker if user resets screen or leaves
     stopSpeech();
   }
+
+  // Cleanup hook triggered on component unmount (route change)
   return () => {
     stopSpeech();
   };
 }, [mode, response, speakText, stopSpeech]);
 ```
 
-#### 4. Control Interface State Binding
+---
 
-The UI binds playback state to interactive buttons, allowing users to toggle speech states gracefully:
+## 📡 4. Remote Webhook & Data Pipeline
 
-- **`window.speechSynthesis.speak(utterance)`**: Initiates audio playback.
-- **`window.speechSynthesis.pause()`**: Temporarily pauses.
-- **`window.speechSynthesis.resume()`**: Continues narration from where it stopped.
-- **`window.speechSynthesis.cancel()`**: Fully halts execution and flushes the speech queue.
+When an elder submits queries, photos of receipts, or recorded audio files, the Copilot interface packages the inputs into an asynchronous pipeline:
+
+### 📤 1. Request Assembly (`FormData`)
+
+Inputs are bundled using `FormData` to support binary media file uploads:
+
+- **Audio Attachments:** Recorded voices are captured as an audio file blob (typically `.m4a` or `.webm`) and appended to the key `"audio"`.
+- **Images/Files:** Invoice photos or bank alert screenshots are appended to the key `"image"`.
+- **Text Inputs:** Written text strings are appended to the key `"text"`.
+
+```typescript
+const formData = new FormData();
+if (hasImage && uploadedFile?.file) formData.append("image", uploadedFile.file);
+if (hasAudio && audioBlob) formData.append("audio", audioBlob, "navigation.m4a");
+if (draftedText.trim() !== "") formData.append("text", draftedText.trim());
+```
+
+### 📥 2. Webhook Ingestion & JSON Key Routing
+
+The application submits a `POST` request to the endpoint:
+`https://209.38.213.186.sslip.io/webhook/c92e60c4-c6e8-4e46-9685-15a72025d50a`
+
+The remote LLM processes the inputs, categorizes the event, and returns a JSON payload containing a `spoke` key. The client dynamically parses and routes this response:
+
+```mermaid
+flowchart TD
+    APIResponse[Fetch Returns Response] --> CheckContentType{Is JSON?}
+    CheckContentType -->|No| PlainText[Render Raw Text Response]
+    CheckContentType -->|Yes| ParseSpoke{Inspect json.spoke value}
+
+    ParseSpoke -->|SCAM_DETECTION| Scam[Render evaluation.user_defense_guidance]
+    ParseSpoke -->|C2_INTERFACE| Screen[Render elderly_guidance_es]
+    ParseSpoke -->|MANAGEMENT| Finance[Render json.answer]
+    ParseSpoke -->|C1_DOCUMENT| Doc[Render json.easy_explanation]
+    ParseSpoke -->|Fallback| Fallback[Parse fallback string properties]
+
+    PlainText --> Render[Display Response on Screen + Auto-trigger Speech]
+    Scam --> Render
+    Screen --> Render
+    Finance --> Render
+    Doc --> Render
+    Fallback --> Render
+```
 
 ---
 
-## 🏛️ Architectural Decisions & Trade-offs
+## 💾 5. Data Simulation & Local Storage State
 
-### 1. TanStack Start for Hydration & Speed
+To simulate database interactions without introducing backend database dependencies, the application relies on two modules:
 
-- **Decision:** Choosing TanStack Start over traditional Client-Only Single Page Applications (SPAs).
-- **Trade-off:** Introduces SSR complexity (such as ensuring code blocks like `window.speechSynthesis` check for `typeof window === "undefined"` to prevent node compiler failures), but yields superior initial page load speeds and SEO indexing potential.
+### 1. localStorage Integration (`src/lib/elder-profile.ts`)
 
-### 2. Browser Local Storage for Simulated State
+Controls user properties for the elder's profile. Writing to this state updates parameters key-values:
 
-- **Decision:** Utilizing `localStorage` to manage parameters like the elder's customized name or cash baseline inside [elder-profile.ts](file:///home/vinomo/programming/master/data_science_and_ai/familia-b3b8cda0/src/lib/elder-profile.ts).
-- **Trade-off:** Avoids complex database connections during development, keeping the app self-contained, but state cannot be shared across different browsers or cleared devices.
+- `getStoredElderName()`: Reads client name parameter (defaults to `"Carmen"`).
+- `setStoredElderName(name)`: Updates the stored string.
+- `getStoredElderPin()`: Reads the 4-digit security code.
 
-### 3. Asynchronous Remote API Webhook
+### 2. Mock Statistics Engine (`src/lib/dashboard-mocks.ts`)
 
-- **Decision:** Routing the Copilot payload to an external agent endpoint (`https://209.38.213.186.sslip.io/webhook/...`).
-- **Trade-off:** The frontend parses multimodal uploads (text, voice audio, image attachments) into a `FormData` envelope. The API parses various structured keys (e.g. `user_defense_guidance`, `easy_explanation`, `elderly_guidance_es`) to return context-rich answers tailored for the elder.
+Supplies datasets to feed the charts, lists, and tables inside the Tutor Dashboard:
+
+- **Activity Logs:** Pre-configured timelines describing mock entries (e.g., invoices checked, PIN attempts, mock warnings).
+- **Anomalies Dataset:** Simulates fraudulent bank transfers, double bill charges, and unauthorized card subscriptions.
+- **Recurring Charges:** Represents recurring utility bills to verify subscription alerts.
