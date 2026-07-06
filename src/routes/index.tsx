@@ -231,7 +231,8 @@ function Landing() {
           <PricingComparison
             showBackButton={false}
             showBackground={false}
-            onSelectPlan={() => navigate({ to: "/auth/signup" })}
+            showActions={false}
+            onSelectPlan={() => navigate({ to: "/auth/signup/tutor/elder-setup", search: { step: 1 } })}
           />
         </div>
       </section>

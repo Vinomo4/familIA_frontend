@@ -18,6 +18,7 @@ interface PricingComparisonProps {
   onSelectPlan: (planId: "basico" | "pro") => void;
   showBackButton?: boolean;
   showBackground?: boolean;
+  showActions?: boolean;
 }
 
 export function PricingComparison({
@@ -25,6 +26,7 @@ export function PricingComparison({
   onSelectPlan,
   showBackButton = true,
   showBackground = true,
+  showActions = true,
 }: PricingComparisonProps) {
   const [isYearly, setIsYearly] = useState(false);
 
@@ -176,15 +178,17 @@ export function PricingComparison({
               </ul>
             </div>
 
-            <div className="mt-8">
-              <Button
-                className="w-full cursor-pointer font-medium"
-                variant="outline"
-                onClick={() => onSelectPlan("basico")}
-              >
-                Da el primer paso
-              </Button>
-            </div>
+            {showActions && (
+              <div className="mt-8">
+                <Button
+                  className="w-full cursor-pointer font-medium"
+                  variant="outline"
+                  onClick={() => onSelectPlan("basico")}
+                >
+                  Da el primer paso
+                </Button>
+              </div>
+            )}
           </Card>
 
           <Card className="relative flex w-full flex-col justify-between rounded-[1.4rem] border border-white/40 bg-white/45 px-4 pb-4 pt-5 shadow-none backdrop-blur-sm">
@@ -268,14 +272,16 @@ export function PricingComparison({
               </ul>
             </div>
 
-            <div className="z-10 mt-8">
-              <Button
-                className="w-full cursor-pointer font-medium shadow-sm"
-                onClick={() => onSelectPlan("pro")}
-              >
-                Empieza ahora
-              </Button>
-            </div>
+            {showActions && (
+              <div className="z-10 mt-8">
+                <Button
+                  className="w-full cursor-pointer font-medium shadow-sm"
+                  onClick={() => onSelectPlan("pro")}
+                >
+                  Empieza ahora
+                </Button>
+              </div>
+            )}
           </Card>
         </div>
 
@@ -291,5 +297,10 @@ export function PricingComparison({
 export function Pricing() {
   const navigate = useNavigate();
 
-  return <PricingComparison onSelectPlan={() => navigate({ to: "/auth/signup" })} />;
+  return (
+    <PricingComparison
+      showActions={true}
+      onSelectPlan={() => navigate({ to: "/auth/signup/tutor/elder-setup", search: { step: 1 } })}
+    />
+  );
 }
